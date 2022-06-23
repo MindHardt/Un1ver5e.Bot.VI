@@ -1,12 +1,15 @@
-﻿using Disqord.Bot.Hosting;
+﻿using Disqord;
+using Disqord.Bot.Hosting;
 using Disqord.Gateway;
 using Disqord.Webhook;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Core;
 using Un1ver5e.Bot.Services;
+using Un1ver5e.Bot.Services.Database;
 using Un1ver5e.Bot.Services.Dice;
 
 namespace Un1ver5e.Bot
@@ -37,7 +40,7 @@ namespace Un1ver5e.Bot
                     config.AddJsonFile("config.json");
                     config.AddCommandLine(args);
                 })
-                .ConfigureServices((_, services) =>
+                .ConfigureServices((ctx, services) =>
                 {
                     services
                     .AddSingleton<Random>()
@@ -46,7 +49,13 @@ namespace Un1ver5e.Bot
                     .AddSingleton<IDiceService, DefaultDiceService>()
 
                     .AddWebhookClientFactory()
-                    .AddSingleton<WebHookFeed>();
+
+                    .AddDbContext<BotContext>(options =>
+                    {
+                        string connstr = string.Join(';', ctx.Configuration.GetSection("db_connstr_args").Get<string[]>());
+
+                        options.UseNpgsql(connstr);
+                    });
                 })
                 .ConfigureDiscordBot((context, bot) =>
                 {
@@ -56,10 +65,11 @@ namespace Un1ver5e.Bot
                     string token = config["token"];
                     string[] prefixes = config.GetSection("prefixes").Get<string[]>();
 
-                    bot.Activities = new LocalActivity[] { new(splash, Disqord.ActivityType.Watching) };
+                    bot.Activities = new LocalActivity[] { new(splash, ActivityType.Watching) };
                     bot.Token = token;
                     bot.Prefixes = prefixes;
                     bot.Intents |= GatewayIntent.DirectMessages | GatewayIntent.DirectReactions;
+                    bot.OwnerIds = config.GetSection("owners").Get<ulong[]>().Select(o => (Snowflake)o);
                 })
                 .Build();
         }

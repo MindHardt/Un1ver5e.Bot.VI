@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -8,7 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.6" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.5" />
     <PackageReference Include="Serilog" Version="2.11.0" />
     <PackageReference Include="Serilog.Extensions.Hosting" Version="4.2.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="4.0.1" />
@@ -19,10 +21,6 @@
     <ProjectReference Include="..\DefaultDiceService\DefaultDiceService.csproj" />
     <ProjectReference Include="..\Disqord\src\Disqord.Bot\Disqord.Bot.csproj" />
     <ProjectReference Include="..\Disqord\src\Disqord\Disqord.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Services\Tags\" />
   </ItemGroup>
 
 </Project>
