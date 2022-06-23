@@ -1,33 +1,46 @@
 ﻿using Disqord;
 using Disqord.Bot.Commands;
 using Disqord.Bot.Commands.Application;
+using Disqord.Rest;
 using Microsoft.Extensions.Configuration;
 using Qmmands;
+using System.Text;
+using Un1ver5e.Bot.Services.Database;
 using Un1ver5e.Bot.Services.Dice;
 
 namespace Un1ver5e.Bot.Services
 {
-    public class BasicCommandsModule : DiscordApplicationModuleBase
+    public class BasicApplicationModule : DiscordApplicationModuleBase
     {
         private readonly string[] _rateopts;
-        private readonly WebHookFeed _feed;
         private readonly IDiceService _dice;
-        public BasicCommandsModule(IConfiguration config, WebHookFeed feed, IDiceService dice)
+        private readonly BotContext _dbctx;
+        public BasicApplicationModule(IConfiguration config, IDiceService dice, BotContext dbctx)
         {
             _rateopts = config.GetSection("rate_options").Get<string[]>();
-            this._feed = feed;
-            this._dice = dice;
+            _dice = dice;
+            _dbctx = dbctx;
         }
 
         //RATE
         [MessageCommand("Rate")]
-        public IResult RateCommand(IMessage message)
+        [RequireGuild]
+        public async ValueTask<IResult> RateCommandAsync(IMessage message)
         {
+            await Deferral(false);
+
             int randomSeed = (int)message.Id.RawValue;
+
+            ulong messageID = message.Id;
+            ulong channelID = message.ChannelId;
+            ulong guildID = ((await Bot.FetchChannelAsync(channelID)) as IGuildChannel)!.GuildId;
+
+            string msgLink = $"[Исходное сообщение](https://discord.com/channels/{guildID}/{channelID}/{messageID})";
 
             LocalEmbed embed = new()
             {
-                Title = _rateopts.GetRandomElement(new Random(randomSeed))
+                Title = _rateopts.GetRandomElement(new Random(randomSeed)),
+                Description = msgLink
             };
 
             return Response(embed);
@@ -100,24 +113,6 @@ namespace Un1ver5e.Bot.Services
             }
         }
 
-        //BROADCAST
-        [SlashCommand("broadcast")]
-        [Description("Новости.")]
-        [RequireBotOwner]
-        public async ValueTask<IResult> BroadCastCommand(
-            [Name("Текст"), Description("Текст сообщения.")] string text)
-        {
-            LocalWebhookMessage msg = new LocalWebhookMessage().WithContent(text);
-
-            await _feed.SendMessage(msg);
-
-            LocalInteractionMessageResponse resp = new LocalInteractionMessageResponse()
-                .WithIsEphemeral(true)
-                .WithContent("Успешно 📢");
-
-            return Response(resp);
-        }
-
         //DICE
         [SlashCommand("dice")]
         [Description("Бросает кубик по текстовому описанию.")]
@@ -135,5 +130,25 @@ namespace Un1ver5e.Bot.Services
             return Response(embed);
         }
 
+        //SQLSCRIPT
+        [SlashCommand("sqlscript")]
+        [Description("Это для создателя")]
+        public IResult SqlScriptCommand()
+        {
+            string script = _dbctx.GetCreateScript();
+
+            byte[] asBytes = Encoding.UTF8.GetBytes(script);
+
+            Stream stream = new MemoryStream(asBytes);
+            stream.Position = 0;
+
+            LocalAttachment file = new LocalAttachment(stream, "script.sql");
+
+            LocalInteractionMessageResponse resp = new LocalInteractionMessageResponse()
+                .WithIsEphemeral(true)
+                .AddAttachment(file);
+
+            return Response(resp);
+        }
     }
 }
