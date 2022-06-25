@@ -11,6 +11,7 @@ using Serilog.Core;
 using Un1ver5e.Bot.Services;
 using Un1ver5e.Bot.Services.Database;
 using Un1ver5e.Bot.Services.Dice;
+using Un1ver5e.Bot.Services.RateOptionsProvider;
 
 namespace Un1ver5e.Bot
 {
@@ -46,6 +47,8 @@ namespace Un1ver5e.Bot
                     .AddSingleton<Random>()
                     .AddSingleton<LoggingLevelSwitch>()
 
+                    .AddSingleton<IRateOptionsProvider, DefaultRateOptionsProvider>()
+
                     .AddSingleton<IDiceService, DefaultDiceService>()
 
                     .AddWebhookClientFactory()
@@ -56,8 +59,9 @@ namespace Un1ver5e.Bot
 
                         options.UseNpgsql(connstr);
                     });
+
                 })
-                .ConfigureDiscordBot((context, bot) =>
+                .ConfigureDiscordBot<Un1ver5eBot>((context, bot) =>
                 {
                     IConfigurationSection config = context.Configuration.GetSection("discord_config");
 

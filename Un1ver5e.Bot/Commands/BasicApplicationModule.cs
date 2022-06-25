@@ -3,43 +3,40 @@ using Disqord.Bot.Commands;
 using Disqord.Bot.Commands.Application;
 using Disqord.Rest;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Qmmands;
 using System.Text;
+using Un1ver5e.Bot;
 using Un1ver5e.Bot.Services.Database;
 using Un1ver5e.Bot.Services.Dice;
+using Un1ver5e.Bot.Services.RateOptionsProvider;
 
-namespace Un1ver5e.Bot.Services
+namespace Un1ver5e.Bot.Commands
 {
     public class BasicApplicationModule : DiscordApplicationModuleBase
     {
-        private readonly string[] _rateopts;
-        private readonly IDiceService _dice;
-        private readonly BotContext _dbctx;
-        public BasicApplicationModule(IConfiguration config, IDiceService dice, BotContext dbctx)
-        {
-            _rateopts = config.GetSection("rate_options").Get<string[]>();
-            _dice = dice;
-            _dbctx = dbctx;
-        }
-
         //RATE
         [MessageCommand("Rate")]
         [RequireGuild]
         public async ValueTask<IResult> RateCommandAsync(IMessage message)
         {
             await Deferral(false);
+            //Just ensuring
 
             int randomSeed = (int)message.Id.RawValue;
+            string rateoption = Bot.Services.GetRequiredService<IRateOptionsProvider>().GetOption(new Random(randomSeed));
+            //Each call on the same message will result the same
 
             ulong messageID = message.Id;
-            ulong channelID = message.ChannelId;
-            ulong guildID = ((await Bot.FetchChannelAsync(channelID)) as IGuildChannel)!.GuildId;
+            ulong channelID = Context.ChannelId;
+            ulong guildID = Context.GuildId!.Value;
 
             string msgLink = $"[Исходное сообщение](https://discord.com/channels/{guildID}/{channelID}/{messageID})";
+            //Link to original message
 
             LocalEmbed embed = new()
             {
-                Title = _rateopts.GetRandomElement(new Random(randomSeed)),
+                Title = rateoption,
                 Description = msgLink
             };
 
@@ -102,7 +99,6 @@ namespace Un1ver5e.Bot.Services
             {
                 Stream pic = await client.GetStreamAsync(url);
 
-                //TODO: put image into embed
                 LocalInteractionMessageResponse resp = new LocalInteractionMessageResponse()
                     .AddAttachment(new(pic, "generated.jpg"))
                     .AddEmbed(new LocalEmbed()
@@ -119,10 +115,10 @@ namespace Un1ver5e.Bot.Services
         public IResult DiceCommand(
             [Name("кубик"), Description("Текст кубика, например \"2d6\" или \"1d4+2\".")] string dice)
         {
-            IThrowResult result = _dice.ThrowByQuery(dice);
+            IThrowResult result = Bot.Services.GetRequiredService<IDiceService>().ThrowByQuery(dice);
 
             LocalEmbed embed = new LocalEmbed()
-                .WithTitle($"> 🎲 `{result.GetCompleteSum()}`")
+                .WithTitle($"> `{result.GetCompleteSum()}` 🎲 ")
                 .AddField(new LocalEmbedField()
                     .WithValue(result.ToString()!.AsCodeBlock())
                     .WithName(dice));
@@ -135,7 +131,7 @@ namespace Un1ver5e.Bot.Services
         [Description("Это для создателя")]
         public IResult SqlScriptCommand()
         {
-            string script = _dbctx.GetCreateScript();
+            string script = Bot.Services.GetRequiredService<BotContext>().GetCreateScript();
 
             byte[] asBytes = Encoding.UTF8.GetBytes(script);
 
