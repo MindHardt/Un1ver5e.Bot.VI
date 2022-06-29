@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Core;
+using Serilog.Sinks.SystemConsole.Themes;
 using Un1ver5e.Bot.Services;
 using Un1ver5e.Bot.Services.Database;
 using Un1ver5e.Bot.Services.Dice;
@@ -32,7 +33,7 @@ namespace Un1ver5e.Bot
 
                     logger
                     .MinimumLevel.ControlledBy(services.GetRequiredService<LoggingLevelSwitch>())
-                    .WriteTo.Console()
+                    .WriteTo.Console(theme : AnsiConsoleTheme.Literate)
                     .WriteTo.File(filePath, rollingInterval: RollingInterval.Day, shared: true);
                 })
                 .ConfigureHostConfiguration(config =>
@@ -73,7 +74,6 @@ namespace Un1ver5e.Bot
                     bot.Token = token;
                     bot.Prefixes = prefixes;
                     bot.Intents |= GatewayIntent.DirectMessages | GatewayIntent.DirectReactions;
-                    bot.OwnerIds = config.GetSection("owners").Get<ulong[]>().Select(o => (Snowflake)o);
                 })
                 .Build();
         }

@@ -1,9 +1,12 @@
 ﻿using Disqord;
 using Disqord.Bot;
 using Disqord.Bot.Commands;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Qmmands;
+using Qommon.Collections.ReadOnly;
+using Un1ver5e.Bot.Services.Database;
 
 namespace Un1ver5e.Bot
 {
@@ -38,10 +41,6 @@ namespace Un1ver5e.Bot
             _ => result.FailureReason
         };
 
-        protected override ValueTask<IResult> OnBeforeExecuted(IDiscordCommandContext context)
-        {
-            return base.OnBeforeExecuted(context);
-        }
 
         /// <summary>
         /// The default ctor.
@@ -57,5 +56,23 @@ namespace Un1ver5e.Bot
         DiscordClient client)
         : base(options, logger, services, client)
         { }
+
+        protected override ValueTask OnInitialize(CancellationToken cancellationToken)
+        {
+            using (IServiceScope scope = Services.CreateScope())
+            {
+                BotContext ctx = scope.ServiceProvider.GetService<BotContext>()!;
+
+                OwnerIds = ctx.Admins
+                    .Select(admin => admin.Id)
+                    .ToArray()
+                    .Select(id => (Snowflake)id)
+                    .ToReadOnlyList();
+                Logger.LogInformation("Recognizing {0} owners.", OwnerIds.Count);
+
+                return base.OnInitialize(cancellationToken);
+            }
+
+        }
     }
 }

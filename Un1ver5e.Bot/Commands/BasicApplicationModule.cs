@@ -131,7 +131,12 @@ namespace Un1ver5e.Bot.Commands
         [Description("Это для создателя")]
         public IResult SqlScriptCommand()
         {
-            string script = Bot.Services.GetRequiredService<BotContext>().GetCreateScript();
+            string script;
+
+            using (IServiceScope scope = Bot.Services.CreateScope())
+            {
+                script = scope.ServiceProvider.GetService<BotContext>()!.GetCreateScript();
+            }
 
             byte[] asBytes = Encoding.UTF8.GetBytes(script);
 
@@ -145,6 +150,36 @@ namespace Un1ver5e.Bot.Commands
                 .AddAttachment(file);
 
             return Response(resp);
+        }
+
+        [SlashCommand("promote")]
+        [Description("Дает админку бота. Доступно только главному админу.")]
+        [RequireAuthor(298097988495081472)]
+        public async ValueTask<IResult> PromoteCommand(IUser user)
+        {
+            await Deferral(false);
+
+            using (IServiceScope scope = Bot.Services.CreateScope())
+            {
+                BotContext context = scope.ServiceProvider.GetService<BotContext>()!;
+
+                Admin newAdmin = new()
+                {
+                    Id = user.Id
+                };
+
+                context.Admins.Add(newAdmin);
+                await context.SaveChangesAsync();
+
+                LocalEmbed embed = new()
+                {
+                    Title = $"👑 Назначил `{user.Name}` администратором!",
+                    Description = "Изменения вступят в силу после перезапуска бота.",
+                    ThumbnailUrl = user.GetAvatarUrl()
+                };
+
+                return Response(embed);
+            }
         }
     }
 }

@@ -6,6 +6,7 @@ namespace Un1ver5e.Bot.Services.Database
 {
     public partial class BotContext : DbContext
     {
+        public DbSet<Admin> Admins { get; set; } = null!;
         public DbSet<Webhook> Webhooks { get; set; } = null!;
         public DbSet<Tag> Tags { get; set; } = null!;
 
