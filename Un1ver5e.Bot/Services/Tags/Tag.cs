@@ -1,4 +1,6 @@
 ﻿using Disqord;
+using Disqord.Bot;
+using Disqord.Gateway;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json;
@@ -10,7 +12,7 @@ namespace Un1ver5e.Bot.Services.Tags
     public record Tag
     {
         public const int MaxNameLength = 48;
-        private static string[] s_reservedNames =
+        private static readonly string[] s_reservedNames =
         {
             "all", "latest"
         };
@@ -30,20 +32,33 @@ namespace Un1ver5e.Bot.Services.Tags
         public DateTime CreatedAt { get; set; }
         public bool IsPublic { get; set; }
         public string Content { get; set; }
-        public string Attachments { get; set; }
         public ulong AuthorId { get; set; }
         public ulong GuildId { get; set; } //Tags can only be created in guilds; only owner(s) can make them global
 
-        public virtual LocalInteractionMessageResponse Format()
+        public LocalMessageBase PasteTo(LocalMessageBase msg) => msg.WithContent(Content);
+
+        public LocalEmbed GetDisplay(DiscordBotBase bot)
         {
-            using HttpClient client = new();
-            return new LocalInteractionMessageResponse
+            IUser author = bot.GetUser(AuthorId);
+
+            return new LocalEmbed()
             {
-                Content = Content,
-                Attachments = JsonSerializer.Deserialize<string[]>(Attachments)!
-                .Select(async a => new LocalAttachment(await client.GetStreamAsync(a), a))
-                .Select(t => t.Result)
-                .ToArray(),
+                Author = new LocalEmbedAuthor()
+                {
+                    IconUrl = author.GetAvatarUrl(),
+                    Name = author.Name
+                },
+                Description = Content,
+                Title = $"> Тег `{Name}`",
+                Timestamp = CreatedAt,
+                Fields =
+                {
+                    new LocalEmbedField()
+                    {
+                        Name = "Публичный",
+                        Value = IsPublic ? "🌝 Да" : "🌚 Нет"
+                    }
+                }
             };
         }
 
@@ -51,7 +66,6 @@ namespace Un1ver5e.Bot.Services.Tags
         {
             Name = Guid.NewGuid().ToString();
             Content = message.Content;
-            Attachments = JsonSerializer.Serialize(message.Attachments.Select(a => a.Url).ToArray());
             AuthorId = authorId;
             GuildId = guildId;
             CreatedAt = DateTime.UtcNow;

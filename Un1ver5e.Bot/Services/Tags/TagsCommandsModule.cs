@@ -1,7 +1,11 @@
 ﻿using Disqord;
 using Disqord.Bot.Commands;
 using Disqord.Bot.Commands.Application;
+using Disqord.Bot.Commands.Components;
+using Disqord.Extensions.Interactivity;
 using Disqord.Extensions.Interactivity.Menus.Paged;
+using Disqord.Gateway;
+using Disqord.Rest;
 using Disqord.Webhook;
 using Qmmands;
 using System.Text.RegularExpressions;
@@ -21,24 +25,44 @@ namespace Un1ver5e.Bot.Services
         }
 
         //Create
-        [MessageCommand("Create Tag")]
+        [MessageCommand("Создать тег")]
         [RequireGuild]
-
         public async ValueTask<IResult> CreateTagCommand(IMessage msg)
         {
             if (msg is not IUserMessage usermsg) throw new ArgumentException("Нельзя сделать тег из системного сообщения!");
 
-            await Deferral(true);
-
             Tag tag = new(usermsg, Context.Author.Id, Context.GuildId!.Value);
 
-            await _dbctx.Tags.AddAsync(tag);
-            await _dbctx.SaveChangesAsync();
+            string modalID = tag.Name;
+            var modal = new LocalInteractionModalResponse()
+                .WithCustomId(modalID)
+                .WithTitle("Название тега")
+                .WithComponents(
+                    LocalComponent.Row(LocalComponent.TextInput("name", "Имя", TextInputComponentStyle.Short).WithPlaceholder(modalID)));
 
-            return Response(tag.Name);
+            await Context.Interaction.Response().SendModalAsync(modal);
+
+            InteractionReceivedEventArgs? e = await Bot.WaitForInteractionAsync(Context.ChannelId, e => e is IModalSubmitInteraction ms && ms.CustomId == modalID);
+            IModalSubmitInteraction modalSubmit = (e as IModalSubmitInteraction)!;
+            ITextInputComponent field = ((modalSubmit.Components[0] as IRowComponent)!.Components[0] as ITextInputComponent)!;
+
+            string name = field.Value;
+            tag.Name = name;
+
+            LocalInteractionMessageResponse response = new LocalInteractionMessageResponse().AddEmbed(tag.GetDisplay(Bot)).WithIsEphemeral(true);
+
+            await e.Interaction.Response().SendMessageAsync(response);
+
+            //await _dbctx.Tags.AddAsync(tag);
+            //await _dbctx.SaveChangesAsync();
+
+            return default!;
         }
 
+
+
         [SlashCommand("tag")]
+        [RequireGuild]
         public async ValueTask<IResult> SendTagCommand(
             [Name("Название"), Description("Название искомого тега")] string tagname)
         {
@@ -53,50 +77,26 @@ namespace Un1ver5e.Bot.Services
 
             if (tag is null) throw new ArgumentException("Тег не найден. Возможно, он принадлежит другому серверу и не является публичным. Публичными теги могут делать только администраторы бота.", nameof(tagname));
 
-            return Response(tag.Format());
+            LocalInteractionMessageResponse response = new();
+            tag.PasteTo(response);
+
+            return Response(response);
         }
 
 
-        [SlashCommand("renametag")]
-        public async ValueTask<IResult> RenameTagCommand(
-            [Name("Название"), Description("Название искомого тега")] string oldname,
-            [Name("Новое"), Description("Новое название тега")] string newname)
-        {
-            await Deferral(false);
+        //[SlashCommand("modify-tag")]
+        //public async ValueTask<IResult> ModifyTagCommand(
+        //    [Name("Название"), Description("Название искомого тега")] string name)
+        //{
+        //    await Deferral(false);
 
-            Tag? tag = _dbctx.Tags.Where(tag => tag.Name == oldname).FirstOrDefault();
+        //    Tag? tag = _dbctx.Tags.Where(tag => tag.Name == name).FirstOrDefault();
 
-            if (tag is null) throw new ArgumentException($"Не найден тег {oldname}");
-            if (tag.AuthorId != Context.AuthorId && await Bot.IsOwnerAsync(Context.AuthorId) == false) throw new Exception("У вас нет доступа к этому тегу!");
+        //    if (tag is null) throw new ArgumentException($"Не найден тег {name}");
+        //    if (tag.AuthorId != Context.AuthorId && await Bot.IsOwnerAsync(Context.AuthorId) == false) throw new Exception("У вас нет доступа к этому тегу!");
 
-            tag.Name = newname;
-
-            _dbctx.Tags.Update(tag);
-            await _dbctx.SaveChangesAsync();
-
-            LocalEmbed embed = new()
-            {
-                Fields =
-                {
-                    new()
-                    {
-                        Name = "Старое имя",
-                        Value = oldname.AsCodeBlock(),
-                        IsInline = true
-                    },
-                    new()
-                    {
-                        Name = "Новое имя",
-                        Value = newname.AsCodeBlock(),
-                        IsInline = true
-                    }
-                },
-                Title = "Название тега изменено",
-                Timestamp = DateTime.Now,
-            };
-
-            return Response(embed);
-        }
+        //    return View(new TagModifyView(Bot, tag));
+        //}
 
 
         [SlashCommand("list-tags")]

@@ -95,18 +95,16 @@ namespace Un1ver5e.Bot.Commands
         {
             await Deferral(isEphemeral: false);
 
-            using (HttpClient client = new())
-            {
-                Stream pic = await client.GetStreamAsync(url);
+            using HttpClient client = new();
+            Stream pic = await client.GetStreamAsync(url);
 
-                LocalInteractionMessageResponse resp = new LocalInteractionMessageResponse()
-                    .AddAttachment(new(pic, "generated.jpg"))
-                    .AddEmbed(new LocalEmbed()
-                        .WithTitle($"Источник: {url}")
-                        .WithImageUrl("attachment://generated.jpg"));
+            LocalInteractionMessageResponse resp = new LocalInteractionMessageResponse()
+                .AddAttachment(new(pic, "generated.jpg"))
+                .AddEmbed(new LocalEmbed()
+                    .WithTitle($"Источник: {url}")
+                    .WithImageUrl("attachment://generated.jpg"));
 
-                return Response(resp);
-            }
+            return Response(resp);
         }
 
         //DICE
@@ -140,10 +138,12 @@ namespace Un1ver5e.Bot.Commands
 
             byte[] asBytes = Encoding.UTF8.GetBytes(script);
 
-            Stream stream = new MemoryStream(asBytes);
-            stream.Position = 0;
+            Stream stream = new MemoryStream(asBytes)
+            {
+                Position = 0
+            };
 
-            LocalAttachment file = new LocalAttachment(stream, "script.sql");
+            LocalAttachment file = new(stream, "script.sql");
 
             LocalInteractionMessageResponse resp = new LocalInteractionMessageResponse()
                 .WithIsEphemeral(true)
@@ -159,27 +159,25 @@ namespace Un1ver5e.Bot.Commands
         {
             await Deferral(false);
 
-            using (IServiceScope scope = Bot.Services.CreateScope())
+            using IServiceScope scope = Bot.Services.CreateScope();
+            BotContext context = scope.ServiceProvider.GetService<BotContext>()!;
+
+            Admin newAdmin = new()
             {
-                BotContext context = scope.ServiceProvider.GetService<BotContext>()!;
+                Id = user.Id
+            };
 
-                Admin newAdmin = new()
-                {
-                    Id = user.Id
-                };
+            context.Admins.Add(newAdmin);
+            await context.SaveChangesAsync();
 
-                context.Admins.Add(newAdmin);
-                await context.SaveChangesAsync();
+            LocalEmbed embed = new()
+            {
+                Title = $"👑 Назначил `{user.Name}` администратором!",
+                Description = "Изменения вступят в силу после перезапуска бота.",
+                ThumbnailUrl = user.GetAvatarUrl()
+            };
 
-                LocalEmbed embed = new()
-                {
-                    Title = $"👑 Назначил `{user.Name}` администратором!",
-                    Description = "Изменения вступят в силу после перезапуска бота.",
-                    ThumbnailUrl = user.GetAvatarUrl()
-                };
-
-                return Response(embed);
-            }
+            return Response(embed);
         }
     }
 }

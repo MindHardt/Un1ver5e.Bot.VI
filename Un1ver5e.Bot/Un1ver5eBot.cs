@@ -1,6 +1,7 @@
 ﻿using Disqord;
 using Disqord.Bot;
 using Disqord.Bot.Commands;
+using Disqord.Bot.Commands.Interaction;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
