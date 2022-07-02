@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace Un1ver5e.Bot.Services.Webhooks
+﻿namespace Un1ver5e.Bot.Services.Webhooks
 {
     public record Webhook
     {

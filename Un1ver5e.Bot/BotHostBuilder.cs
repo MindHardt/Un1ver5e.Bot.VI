@@ -9,7 +9,6 @@ using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Core;
 using Serilog.Sinks.SystemConsole.Themes;
-using Un1ver5e.Bot.Services;
 using Un1ver5e.Bot.Services.Database;
 using Un1ver5e.Bot.Services.Dice;
 using Un1ver5e.Bot.Services.RateOptionsProvider;
@@ -33,7 +32,7 @@ namespace Un1ver5e.Bot
 
                     logger
                     .MinimumLevel.ControlledBy(services.GetRequiredService<LoggingLevelSwitch>())
-                    .WriteTo.Console(theme : AnsiConsoleTheme.Literate)
+                    .WriteTo.Console(theme: AnsiConsoleTheme.Literate)
                     .WriteTo.File(filePath, rollingInterval: RollingInterval.Day, shared: true);
                 })
                 .ConfigureHostConfiguration(config =>

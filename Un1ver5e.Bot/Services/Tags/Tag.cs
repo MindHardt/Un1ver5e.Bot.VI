@@ -3,9 +3,6 @@ using Disqord.Bot;
 using Disqord.Gateway;
 using Disqord.Rest;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json;
-using System.Text.RegularExpressions;
 
 namespace Un1ver5e.Bot.Services.Tags
 {
@@ -20,9 +17,9 @@ namespace Un1ver5e.Bot.Services.Tags
         private string _name = null!;
 
         public int Id { get; set; }
-        public string Name 
-        { 
-            get => _name; 
+        public string Name
+        {
+            get => _name;
             set
             {
                 string formatted = value.ToLower();
@@ -82,7 +79,7 @@ namespace Un1ver5e.Bot.Services.Tags
         public Tag() { } //ctor for EntityFramework
 #pragma warning restore
 
-        private static bool CheckName(string name) => 
+        private static bool CheckName(string name) =>
             name.Length <= MaxNameLength ||
             s_reservedNames.Contains(name.ToLower()) == false;
 

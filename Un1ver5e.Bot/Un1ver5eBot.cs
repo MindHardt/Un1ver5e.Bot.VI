@@ -26,13 +26,13 @@ namespace Un1ver5e.Bot
             CommandNotFoundResult
                 => $"Команда не найдена!",
 
-            TypeParseFailedResult res 
+            TypeParseFailedResult res
                 => $"Не удалось преобразовать аргумент **{res.Parameter.Name}**\n Текст:`{new string(res.Value.ToArray())}`",
 
-            ChecksFailedResult res 
+            ChecksFailedResult res
                 => "Не пройдены проверки:\n" + string.Join('\n', res.FailedChecks.Select(x => x.Value.FailureReason)).AsCodeBlock(),
 
-            ParameterChecksFailedResult res 
+            ParameterChecksFailedResult res
                 => $"Аргумент не прошел проверку(и) **{res.Parameter.Name}**\n"
                 + string.Join('\n', res.FailedChecks.Select(x => x.Value.FailureReason)).AsCodeBlock(),
 

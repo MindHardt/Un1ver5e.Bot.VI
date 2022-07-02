@@ -1,13 +1,10 @@
 ﻿using Disqord;
-using Disqord.Bot.Commands;
 using Disqord.Bot.Commands.Application;
 using Disqord.Extensions.Interactivity;
-using Disqord.Extensions.Interactivity.Menus;
 using Disqord.Extensions.Interactivity.Menus.Paged;
 using Disqord.Gateway;
 using Disqord.Models;
 using Disqord.Rest;
-using Disqord.Serialization.Json.Default;
 using Qmmands;
 using System.Text.RegularExpressions;
 using Un1ver5e.Bot.Commands;
@@ -86,7 +83,7 @@ namespace Un1ver5e.Bot.Services
                 .AddEmbed(await tag.GetDisplayAsync(Bot))
                 .AddComponent(new LocalRowComponent()
                     .AddComponent(new LocalButtonComponent()
-                    { 
+                    {
                         CustomId = interactionID,
                         Emoji = LocalEmoji.Unicode("💾")
                     })
@@ -220,7 +217,7 @@ namespace Un1ver5e.Bot.Services
                 .WithIsEphemeral(true));
             }
         }
-        
+
 
         //GET TAG AUTOCOMPLETE
         [AutoComplete("tag")]
@@ -238,7 +235,7 @@ namespace Un1ver5e.Bot.Services
                     .Select(tag => tag.Name)
                     .Where(name => Regex.IsMatch(name, regex))
                     .OrderBy(name => Guid.NewGuid())
-                    .Take(ApplicationCommands.Options.MaxChoiceAmount) 
+                    .Take(ApplicationCommands.Options.MaxChoiceAmount)
                     .ToArray();
 
                 tagname.Choices.AddRange(matches);

@@ -1,13 +1,9 @@
 ﻿using Disqord;
 using Disqord.Bot.Commands;
 using Disqord.Bot.Commands.Application;
-using Disqord.Bot.Commands.Components;
-using Disqord.Rest;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Qmmands;
 using System.Text;
-using Un1ver5e.Bot;
 using Un1ver5e.Bot.Services.Database;
 using Un1ver5e.Bot.Services.Dice;
 using Un1ver5e.Bot.Services.RateOptionsProvider;
