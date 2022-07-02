@@ -16,7 +16,7 @@
         /// Throws this <see cref="DefaultDice"/> and returns the results.
         /// </summary>
         /// <returns>A collection of integers, the size of collection is equal to <see cref="Count"/>.</returns>
-        public IEnumerable<int> GetResults(Random random) => 
+        public IEnumerable<int> GetResults(Random random) =>
             Enumerable.Repeat(0, Count)
             .Select(r => random.Next(1, MaxValue + 1));
 
