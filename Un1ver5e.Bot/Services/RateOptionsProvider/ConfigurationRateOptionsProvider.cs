@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Un1ver5e.Bot.Services.RateOptionsProvider
 {
-    public class DefaultRateOptionsProvider : IRateOptionsProvider
+    public class ConfigurationRateOptionsProvider : IRateOptionsProvider
     {
         private string[] _rateOpts;
-        public DefaultRateOptionsProvider(IConfiguration config)
+        public ConfigurationRateOptionsProvider(IConfiguration config)
         {
             _rateOpts = config.GetSection("rate_options").Get<string[]>();
         }

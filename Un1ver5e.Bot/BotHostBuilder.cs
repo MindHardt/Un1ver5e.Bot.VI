@@ -48,7 +48,7 @@ namespace Un1ver5e.Bot
                     .AddSingleton<Random>()
                     .AddSingleton<LoggingLevelSwitch>()
 
-                    .AddSingleton<IRateOptionsProvider, DefaultRateOptionsProvider>()
+                    .AddTransient<IRateOptionsProvider, ConfigurationRateOptionsProvider>()
 
                     .AddSingleton<IDiceService, DefaultDiceService>()
 

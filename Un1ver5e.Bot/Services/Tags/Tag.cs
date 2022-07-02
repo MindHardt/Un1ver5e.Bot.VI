@@ -1,6 +1,7 @@
 ﻿using Disqord;
 using Disqord.Bot;
 using Disqord.Gateway;
+using Disqord.Rest;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json;
@@ -33,13 +34,14 @@ namespace Un1ver5e.Bot.Services.Tags
         public bool IsPublic { get; set; }
         public string Content { get; set; }
         public ulong AuthorId { get; set; }
-        public ulong GuildId { get; set; } //Tags can only be created in guilds; only owner(s) can make them global
+        public ulong GuildId { get; set; } //Tags can only be created in guilds; only owner(s) can make global tags
 
         public LocalMessageBase PasteTo(LocalMessageBase msg) => msg.WithContent(Content);
 
-        public LocalEmbed GetDisplay(DiscordBotBase bot)
+        public async ValueTask<LocalEmbed> GetDisplayAsync(DiscordBotBase bot)
         {
             IUser author = bot.GetUser(AuthorId);
+            if (author is null) author = await bot.FetchUserAsync(AuthorId);
 
             return new LocalEmbed()
             {
@@ -61,6 +63,10 @@ namespace Un1ver5e.Bot.Services.Tags
                 }
             };
         }
+
+        public bool CanBeSeen(ulong guildId) => IsPublic || GuildId == guildId;
+
+        public bool CanBeEditedBy(ulong userId) => AuthorId == userId;
 
         public Tag(IUserMessage message, ulong authorId, ulong guildId)
         {

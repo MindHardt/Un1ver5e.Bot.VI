@@ -1,6 +1,7 @@
 ﻿using Disqord;
 using Disqord.Bot.Commands;
 using Disqord.Bot.Commands.Application;
+using Disqord.Bot.Commands.Components;
 using Disqord.Rest;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,7 +17,7 @@ namespace Un1ver5e.Bot.Commands
     public class BasicApplicationModule : DiscordApplicationModuleBase
     {
         //RATE
-        [MessageCommand("Rate")]
+        [MessageCommand("Оценить")]
         [RequireGuild]
         public async ValueTask<IResult> RateCommandAsync(IMessage message)
         {
@@ -43,12 +44,11 @@ namespace Un1ver5e.Bot.Commands
             return Response(embed);
         }
 
+
         //AVATAR
-        [SlashCommand("avatar")]
-        [Description("Аватар")]
+        [UserCommand("Аватар")]
         [RequireGuild]
-        public IResult AvatarCommand(
-            [Name("Пользователь"), Description("Тот, чью аватарку безбожно воруем.")] IMember member)
+        public IResult AvatarCommand(IMember member)
         {
             string url = member.GetAvatarUrl(CdnAssetFormat.Png, 1024);
             string nick = member.Nick ?? member.Name;
@@ -62,6 +62,7 @@ namespace Un1ver5e.Bot.Commands
 
             return Response(embed);
         }
+
 
         //EMOJI
         [SlashCommand("emoji")]
@@ -82,6 +83,7 @@ namespace Un1ver5e.Bot.Commands
 
             return Response(embed);
         }
+
 
         //GENERATE
         [SlashCommand("generate")]
@@ -151,6 +153,7 @@ namespace Un1ver5e.Bot.Commands
 
             return Response(resp);
         }
+
 
         [SlashCommand("promote")]
         [Description("Дает админку бота. Доступно только главному админу.")]
