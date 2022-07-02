@@ -1,7 +1,10 @@
 ﻿using Disqord;
 using Disqord.Bot.Commands;
 using Disqord.Bot.Commands.Application;
+using Disqord.Rest;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Qmmands;
 using System.Text;
 using Un1ver5e.Bot.Services.Database;
@@ -177,6 +180,17 @@ namespace Un1ver5e.Bot.Commands
             };
 
             return Response(embed);
+        }
+
+
+        [SlashCommand("shutdown")]
+        [Description("Огонь и смерть! (Только для администраторов)")]
+        [RequireBotOwner]
+        public async ValueTask ShutDownCommand()
+        {
+            await Context.Interaction.Response().SendMessageAsync(new LocalInteractionMessageResponse().WithContent("https://tenor.com/view/dies-cat-dead-died-gif-13827091")); //dying cat gif
+            Logger.LogCritical("Shutting down because {murderer} told me to :<", Context.Author.Name);
+            await Bot.Services.GetRequiredService<IHost>().StopAsync();
         }
     }
 }
