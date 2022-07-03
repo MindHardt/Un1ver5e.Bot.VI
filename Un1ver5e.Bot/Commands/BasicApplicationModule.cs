@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Qmmands;
+using System.Diagnostics;
 using System.Text;
 using Un1ver5e.Bot.Services.Database;
 using Un1ver5e.Bot.Services.Dice;
@@ -108,6 +109,7 @@ namespace Un1ver5e.Bot.Commands
             return Response(resp);
         }
 
+
         //DICE
         [SlashCommand("dice")]
         [Description("Бросает кубик по текстовому описанию.")]
@@ -125,9 +127,10 @@ namespace Un1ver5e.Bot.Commands
             return Response(embed);
         }
 
+
         //SQLSCRIPT
         [SlashCommand("sqlscript")]
-        [Description("Это для создателя")]
+        [Description("(Только для администраторов)")]
         public IResult SqlScriptCommand()
         {
             string script;
@@ -154,6 +157,7 @@ namespace Un1ver5e.Bot.Commands
         }
 
 
+        //PROMOTE
         [SlashCommand("promote")]
         [Description("Дает админку бота. Доступно только главному админу.")]
         [RequireAuthor(298097988495081472)]
@@ -183,6 +187,7 @@ namespace Un1ver5e.Bot.Commands
         }
 
 
+        //SHUTDOWN
         [SlashCommand("shutdown")]
         [Description("Огонь и смерть! (Только для администраторов)")]
         [RequireBotOwner]
@@ -191,6 +196,29 @@ namespace Un1ver5e.Bot.Commands
             await Context.Interaction.Response().SendMessageAsync(new LocalInteractionMessageResponse().WithContent("https://tenor.com/view/dies-cat-dead-died-gif-13827091")); //dying cat gif
             Logger.LogCritical("Shutting down because {murderer} told me to :<", Context.Author.Name);
             await Bot.Services.GetRequiredService<IHost>().StopAsync();
+        }
+
+
+        [SlashCommand("ping")]
+        [Description("Проверяем живой ли бот")]
+        public IResult Ping()
+        {
+            TimeSpan latency = Context.Interaction.CreatedAt() - DateTimeOffset.Now;
+            DateTimeOffset launchTime = Process.GetCurrentProcess().StartTime;
+
+            string launchTimeStamp = $"<t:{launchTime.ToUnixTimeSeconds()}:R>";
+            string latencyTimeStamp = $"Задержка сокета `{((int)latency.TotalMilliseconds)}`мс.";
+
+
+            LocalInteractionMessageResponse response = new LocalInteractionMessageResponse()
+                .AddEmbed(new LocalEmbed()
+                    .WithTitle(latencyTimeStamp)
+                    .AddField(new LocalEmbedField()
+                        .WithName("Бот запущен")
+                        .WithValue(launchTimeStamp)))
+                .AddComponent(LocalComponent.Row(DeleteThisButtonCommandModule.GetDeleteButton()));
+
+            return Response(response);
         }
     }
 }

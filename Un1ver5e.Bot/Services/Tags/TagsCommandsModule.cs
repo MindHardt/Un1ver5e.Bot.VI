@@ -245,6 +245,7 @@ namespace Un1ver5e.Bot.Services
 
         //LIST TAGS
         [SlashCommand("list-tags")]
+        [Description("Выводит список тегов с возможностью фильтрации.")]
         public async ValueTask<IResult> ListTagsCommand(
             [Name("Фильтр"), Description("Какие теги показываем")]
             [Choice("Свои", "self")]
