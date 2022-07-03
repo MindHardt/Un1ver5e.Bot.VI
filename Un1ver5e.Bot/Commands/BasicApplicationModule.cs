@@ -203,7 +203,7 @@ namespace Un1ver5e.Bot.Commands
         [Description("Проверяем живой ли бот")]
         public IResult Ping()
         {
-            TimeSpan latency = Context.Interaction.CreatedAt() - DateTimeOffset.Now;
+            TimeSpan latency = DateTimeOffset.Now - Context.Interaction.CreatedAt();
             DateTimeOffset launchTime = Process.GetCurrentProcess().StartTime;
 
             string launchTimeStamp = $"<t:{launchTime.ToUnixTimeSeconds()}:R>";
