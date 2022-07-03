@@ -6,14 +6,15 @@ namespace Un1ver5e.Bot.Commands
 {
     public class DeleteThisButtonCommandModule : DiscordComponentModuleBase
     {
+        private const string DeleteButtonCustomId = "mo_delete_this";
         public static LocalButtonComponent GetDeleteButton() => new()
         {
             Emoji = LocalEmoji.Unicode("🗑"),
-            CustomId = "mo_delete_this",
+            CustomId = DeleteButtonCustomId,
             Style = LocalButtonComponentStyle.Danger
         };
 
-        [ButtonCommand("mo_delete_this")]
+        [ButtonCommand(DeleteButtonCustomId)]
         public async ValueTask DeleteMessageButtonCommand()
         {
             IMessage msg = (Context.Interaction as IComponentInteraction)!.Message;
