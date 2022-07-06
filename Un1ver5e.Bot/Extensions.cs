@@ -36,5 +36,12 @@
         /// <param name="lang">The language used for formatting, i.e. "CS", "XML", "JSON"...</param>
         /// <returns></returns>
         public static string AsCodeBlock(this string original, string? lang = null) => $"```{lang ?? string.Empty}\n{original}```";
+
+        /// <summary>
+        /// Formats <paramref name="time"/> as a discord timestamp, which dynamically changes according to current system time of a discord user.
+        /// </summary>
+        /// <param name="time"></param>
+        /// <returns></returns>
+        public static string ToRelativeDiscordTime(this DateTimeOffset time) => $"<t:{time.ToUnixTimeSeconds()}:R>";
     }
 }
