@@ -20,15 +20,13 @@ namespace Un1ver5e.Bot.Services
         }
 
         //BROADCAST
-        [SlashCommand("broadcast")]
-        [Description("Новости.")]
+        [MessageCommand("Объявить")]
         [RequireBotOwner]
-        public async ValueTask<IResult> BroadCastCommand(
-            [Name("Текст"), Description("Текст сообщения.")] string text)
+        public async ValueTask<IResult> BroadCastCommand(IMessage message)
         {
             await Deferral(true);
 
-            LocalWebhookMessage msg = new LocalWebhookMessage().WithContent(text);
+            LocalWebhookMessage msg = new LocalWebhookMessage().WithContent(message.Content);
 
             foreach (Webhook webhook in _dbctx.Webhooks)
             {
@@ -47,7 +45,7 @@ namespace Un1ver5e.Bot.Services
         //ADDWEBHOOK
         [SlashCommand("add-webhook")]
         [Description("Добавляет боту вебхук. Не используй если не понимаешь зачем.")]
-        [RequireAuthorPermissions(Permission.ManageChannels)]
+        [RequireAuthorPermissions(Permission.ManageWebhooks)]
         public async ValueTask<IResult> AddWebhookCommand(
             [Name("Вебхук"), Description("URL вебхука")] string webhookurl)
         {
