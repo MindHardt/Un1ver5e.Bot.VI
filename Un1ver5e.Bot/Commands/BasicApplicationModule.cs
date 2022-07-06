@@ -6,6 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Qmmands;
+using Serilog.Core;
+using Serilog.Events;
 using System.Diagnostics;
 using System.Text;
 using Un1ver5e.Bot.Services.Database;
@@ -219,6 +221,18 @@ namespace Un1ver5e.Bot.Commands
                 .AddComponent(LocalComponent.Row(DeleteThisButtonCommandModule.GetDeleteButton()));
 
             return Response(response);
+        }
+
+        [SlashCommand("verbosity")]
+        [Description("(Только для администраторов)")]
+        [RequireBotOwner]
+        public IResult LogLevelSwitch(
+            [Name("Уровень")] LogEventLevel level)
+        {
+            LoggingLevelSwitch levelSwitch = Context.Services.GetRequiredService<LoggingLevelSwitch>();
+
+            levelSwitch.MinimumLevel = level;
+            return Response(new LocalInteractionMessageResponse().WithContent(level.ToString()).WithIsEphemeral());
         }
     }
 }

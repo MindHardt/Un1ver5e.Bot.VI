@@ -28,6 +28,7 @@ namespace Un1ver5e.Bot.Services
         public async ValueTask CreateTagCommand(IMessage msg)
         {
             if (msg is not IUserMessage usermsg) throw new ArgumentException("Нельзя сделать тег из системного сообщения!");
+            if (string.IsNullOrWhiteSpace(usermsg.Content)) throw new ArgumentException("Тегу нужен текст.");
 
             Tag tag = new(usermsg, Context.Author.Id, Context.GuildId);
 
