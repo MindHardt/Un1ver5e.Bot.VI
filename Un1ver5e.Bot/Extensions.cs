@@ -1,4 +1,6 @@
-﻿namespace Un1ver5e.Bot
+﻿using System.Text;
+
+namespace Un1ver5e.Bot
 {
     /// <summary>
     /// Contains various extension methods.
@@ -43,5 +45,34 @@
         /// <param name="time"></param>
         /// <returns></returns>
         public static string ToRelativeDiscordTime(this DateTimeOffset time) => $"<t:{time.ToUnixTimeSeconds()}:R>";
+
+        /// <summary>
+        /// Chunks <paramref name="collection"/> into pages at maximum length of <paramref name="maxPageLen"/>.
+        /// </summary>
+        /// <param name="collection"></param>
+        /// <param name="maxPageLen"></param>
+        /// <returns></returns>
+        public static IList<string> ChunkAtPages(this IEnumerable<string> collection, int maxPageLen)
+        {
+            Queue<string> strings = new Queue<string>(collection);
+
+            List<string> processed = new();
+
+            StringBuilder sb = new(maxPageLen);
+            while (strings.Any())
+            {
+                string current = strings.Dequeue();
+
+                if (sb.Length + current.Length > maxPageLen)
+                {
+                    processed.Add(sb.ToString());
+                    sb.Clear();
+                }
+                sb.Append(current);
+            }
+            processed.Add(sb.ToString());
+
+            return processed;
+        }
     }
 }

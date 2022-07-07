@@ -130,77 +130,7 @@ namespace Un1ver5e.Bot.Commands
         }
 
 
-        //SQLSCRIPT
-        [SlashCommand("sqlscript")]
-        [Description("(Только для администраторов)")]
-        public IResult SqlScriptCommand()
-        {
-            string script;
-
-            using (IServiceScope scope = Bot.Services.CreateScope())
-            {
-                script = scope.ServiceProvider.GetService<BotContext>()!.GetCreateScript();
-            }
-
-            byte[] asBytes = Encoding.UTF8.GetBytes(script);
-
-            Stream stream = new MemoryStream(asBytes)
-            {
-                Position = 0
-            };
-
-            LocalAttachment file = new(stream, "script.sql");
-
-            LocalInteractionMessageResponse resp = new LocalInteractionMessageResponse()
-                .WithIsEphemeral(true)
-                .AddAttachment(file);
-
-            return Response(resp);
-        }
-
-
-        //PROMOTE
-        [SlashCommand("promote")]
-        [Description("Дает админку бота. Доступно только главному админу.")]
-        [RequireAuthor(298097988495081472)]
-        public async ValueTask<IResult> PromoteCommand(IUser user)
-        {
-            await Deferral(false);
-
-            using IServiceScope scope = Bot.Services.CreateScope();
-            BotContext context = scope.ServiceProvider.GetService<BotContext>()!;
-
-            Admin newAdmin = new()
-            {
-                Id = user.Id
-            };
-
-            context.Admins.Add(newAdmin);
-            await context.SaveChangesAsync();
-
-            LocalEmbed embed = new()
-            {
-                Title = $"👑 Назначил `{user.Name}` администратором!",
-                Description = "Изменения вступят в силу после перезапуска бота.",
-                ThumbnailUrl = user.GetAvatarUrl()
-            };
-
-            return Response(embed);
-        }
-
-
-        //SHUTDOWN
-        [SlashCommand("shutdown")]
-        [Description("Огонь и смерть! (Только для администраторов)")]
-        [RequireBotOwner]
-        public async ValueTask ShutDownCommand()
-        {
-            await Context.Interaction.Response().SendMessageAsync(new LocalInteractionMessageResponse().WithContent("https://tenor.com/view/dies-cat-dead-died-gif-13827091")); //dying cat gif
-            Logger.LogCritical("Shutting down because {murderer} told me to :<", Context.Author.Name);
-            await Bot.Services.GetRequiredService<IHost>().StopAsync();
-        }
-
-
+        //PING
         [SlashCommand("ping")]
         [Description("Проверяем живой ли бот")]
         public IResult Ping()
@@ -221,18 +151,6 @@ namespace Un1ver5e.Bot.Commands
                 .AddComponent(LocalComponent.Row(DeleteThisButtonCommandModule.GetDeleteButton()));
 
             return Response(response);
-        }
-
-        [SlashCommand("verbosity")]
-        [Description("(Только для администраторов)")]
-        [RequireBotOwner]
-        public IResult LogLevelSwitch(
-            [Name("Уровень")] LogEventLevel level)
-        {
-            LoggingLevelSwitch levelSwitch = Context.Services.GetRequiredService<LoggingLevelSwitch>();
-
-            levelSwitch.MinimumLevel = level;
-            return Response(new LocalInteractionMessageResponse().WithContent(level.ToString()).WithIsEphemeral());
         }
     }
 }
