@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Arklens\Arklens.csproj" />
     <ProjectReference Include="..\DefaultDiceService\DefaultDiceService.csproj" />
     <ProjectReference Include="..\Disqord\src\Disqord.Bot\Disqord.Bot.csproj" />
     <ProjectReference Include="..\Disqord\src\Disqord.Core\Disqord.Core.csproj" />
