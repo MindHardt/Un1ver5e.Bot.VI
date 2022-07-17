@@ -33,24 +33,32 @@ namespace Un1ver5e.Bot.Services.Tags
         public ulong AuthorId { get; set; }
         public ulong GuildId { get; set; } //Tags can only be created in guilds; only owner(s) can make global tags
 
-        public LocalMessageBase PasteTo(LocalMessageBase msg) => msg.WithContent(Content);
+        public LocalMessageBase PasteTo(LocalMessageBase msg) => msg
+            .WithContent(Content)
+            .AddComponent(LocalComponent.Row(new LocalButtonComponent()
+            {
+                CustomId = Guid.NewGuid().ToString(),
+                IsDisabled = true,
+                Label = $"Тег [{Name}]",
+                Style = LocalButtonComponentStyle.Secondary
+            }));
 
         public async ValueTask<LocalEmbed> GetDisplayAsync(DiscordBotBase bot)
         {
-            IUser author = bot.GetUser(AuthorId);
+            IUser? author = bot.GetUser(AuthorId);
             if (author is null) author = await bot.FetchUserAsync(AuthorId);
 
             return new LocalEmbed()
             {
                 Author = new LocalEmbedAuthor()
                 {
-                    IconUrl = author.GetAvatarUrl(),
-                    Name = author.Name
+                    IconUrl = author!.GetAvatarUrl(),
+                    Name = author!.Name
                 },
                 Description = Content,
                 Title = $"> Тег `{Name}`",
-                Timestamp = CreatedAt,
-                Fields =
+                Timestamp = new DateTimeOffset(CreatedAt),
+                Fields = new LocalEmbedField[]
                 {
                     new LocalEmbedField()
                     {
