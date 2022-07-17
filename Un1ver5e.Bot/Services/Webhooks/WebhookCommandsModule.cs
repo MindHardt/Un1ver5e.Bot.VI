@@ -2,6 +2,7 @@
 using Disqord.Bot.Commands;
 using Disqord.Bot.Commands.Application;
 using Disqord.Webhook;
+using Microsoft.Extensions.Logging;
 using Qmmands;
 using Un1ver5e.Bot.Services.Database;
 using Un1ver5e.Bot.Services.Webhooks;
@@ -30,9 +31,16 @@ namespace Un1ver5e.Bot.Services
 
             foreach (Webhook webhook in _dbctx.Webhooks)
             {
-                IWebhookClient client = _factory.CreateClient(webhook.Url);
+                try
+                {
+                    IWebhookClient client = _factory.CreateClient(webhook.Url);
 
-                await client.ExecuteAsync(msg);
+                    await client.ExecuteAsync(msg);
+                }
+                catch (Exception)
+                {
+                    Logger.LogWarning("An exception occured while broadcasting to webhook", webhook.Url);
+                }
             }
 
             LocalInteractionMessageResponse resp = new LocalInteractionMessageResponse()

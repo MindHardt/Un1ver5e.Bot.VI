@@ -15,6 +15,7 @@ namespace Un1ver5e.Bot.Services.Tags
             "all", "latest"
         };
         private string _name = null!;
+        private string content;
 
         public int Id { get; set; }
         public string Name
@@ -29,7 +30,15 @@ namespace Un1ver5e.Bot.Services.Tags
         }
         public DateTime CreatedAt { get; set; }
         public bool IsPublic { get; set; }
-        public string Content { get; set; }
+        public string Content 
+        { 
+            get => content; 
+            set
+            {
+                if (string.IsNullOrEmpty(value)) throw new ArgumentException("Tag name cannot be null or empty", nameof(value));
+                content = value;
+            }
+        }
         public ulong AuthorId { get; set; }
         public ulong GuildId { get; set; } //Tags can only be created in guilds; only owner(s) can make global tags
 
