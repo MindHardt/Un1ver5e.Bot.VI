@@ -104,7 +104,7 @@ namespace Un1ver5e.Bot.Commands
 
             IEnumerable<Page> pages = Directory.GetFiles("./Logs")
                 .Select((file, index) => $"{index}. {file[(file.LastIndexOf('\\') + 1)..]}\n")
-                .ChunkAtPages(LocalMessageBase.MaxContentLength - 6)
+                .ChunkAtPages(Discord.Limits.Message.MaxContentLength - 6)
                 .Select(p => new Page().WithContent($"```{p}```"));
 
             return Pages(pages);

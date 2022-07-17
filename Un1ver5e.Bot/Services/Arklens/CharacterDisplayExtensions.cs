@@ -47,7 +47,7 @@ namespace Un1ver5e.Bot.Services.Arklens
                 {
                     Name = character.Name
                 },
-                Fields =
+                Fields = new LocalEmbedField[]
                 {
                     new LocalEmbedField()
                     {

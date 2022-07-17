@@ -63,7 +63,7 @@ namespace Un1ver5e.Bot.Services
             await Context.Interaction.Response().SendModalAsync(modal);
 
             //Reading modal (some black magic)
-            InteractionReceivedEventArgs modalEventArgs = await Bot.WaitForInteractionAsync(Context.ChannelId, e => e.Interaction is IModalSubmitInteraction ms && ms.CustomId == interactionID);
+            InteractionReceivedEventArgs? modalEventArgs = await Bot.WaitForInteractionAsync(Context.ChannelId, e => e.Interaction is IModalSubmitInteraction ms && ms.CustomId == interactionID);
             if (modalEventArgs is null) return;
             IModalSubmitInteraction modalSubmit = (modalEventArgs.Interaction as IModalSubmitInteraction)!;
             IRowComponent row1 = (modalSubmit.Components[0] as IRowComponent)!;
@@ -72,9 +72,9 @@ namespace Un1ver5e.Bot.Services
             IRowComponent row2 = (modalSubmit.Components[1] as IRowComponent)!;
             ISelectionComponent publicityField = (row2.Components[0] as ISelectionComponent)!;
             ITransientEntity<ComponentJsonModel> publicityEntity = (publicityField as ITransientEntity<ComponentJsonModel>)!;
-            string publicity = publicityEntity.Model["values"].ToType<string[]>()[0]; //This is to be replaced once becomes available in disqord
+            string publicity = publicityEntity.Model["values"]!.ToType<string[]>()![0]; //This is to be replaced once becomes available in disqord
 
-            string name = nameField.Value;
+            string name = nameField.Value!;
             tag.Name = name;
             tag.IsPublic = bool.Parse(publicity);
 
@@ -92,7 +92,7 @@ namespace Un1ver5e.Bot.Services
 
             await modalEventArgs.Interaction.Response().SendMessageAsync(response);
 
-            InteractionReceivedEventArgs buttonEventArgs = await Bot.WaitForInteractionAsync(Context.ChannelId, e => e.Interaction is IComponentInteraction ms && ms.CustomId == interactionID);
+            InteractionReceivedEventArgs? buttonEventArgs = await Bot.WaitForInteractionAsync(Context.ChannelId, e => e.Interaction is IComponentInteraction ms && ms.CustomId == interactionID);
             if (buttonEventArgs is null) return;
 
             IComponentInteraction buttonPress = (buttonEventArgs.Interaction as IComponentInteraction)!;
@@ -148,12 +148,12 @@ namespace Un1ver5e.Bot.Services
 
             if (tag is null) throw new ArgumentException("Тег не найден. Возможно, он принадлежит другому серверу и не является публичным. Публичные теги могут создавать только администраторы бота.", nameof(tagname));
 
-            bool isAuthor = tag.CanBeEditedBy(Context.AuthorId);
+            bool isAuthor = tag.AuthorId == Context.AuthorId.RawValue;
             string deleteTagComponentId = Guid.NewGuid().ToString();
             LocalEmbed embed = await tag.GetDisplayAsync(Bot);
             LocalRowComponent row = new()
             {
-                Components =
+                Components = new LocalComponent[]
                 {
                     new LocalButtonComponent()
                     {
@@ -172,7 +172,7 @@ namespace Un1ver5e.Bot.Services
 
             await Response(response);
 
-            InteractionReceivedEventArgs e = await Bot.WaitForInteractionAsync(Context.ChannelId, e => e.Interaction is IComponentInteraction comp && comp.CustomId == deleteTagComponentId);
+            InteractionReceivedEventArgs? e = await Bot.WaitForInteractionAsync(Context.ChannelId, e => e.Interaction is IComponentInteraction comp && comp.CustomId == deleteTagComponentId);
             if (e is null) return;
 
             //CONFIRMATION MODAL
@@ -191,7 +191,7 @@ namespace Un1ver5e.Bot.Services
             await e.Interaction.Response().SendModalAsync(modal);
 
             //Reading modal
-            InteractionReceivedEventArgs modalEventArgs = await Bot.WaitForInteractionAsync(Context.ChannelId, e => e.Interaction is IModalSubmitInteraction ms && ms.CustomId == deleteTagComponentId);
+            InteractionReceivedEventArgs? modalEventArgs = await Bot.WaitForInteractionAsync(Context.ChannelId, e => e.Interaction is IModalSubmitInteraction ms && ms.CustomId == deleteTagComponentId);
             if (modalEventArgs is null) return;
             IModalSubmitInteraction modalSubmit = (modalEventArgs.Interaction as IModalSubmitInteraction)!;
             IRowComponent row1 = (modalSubmit.Components[0] as IRowComponent)!;
@@ -236,7 +236,7 @@ namespace Un1ver5e.Bot.Services
                     .Select(tag => tag.Name)
                     .Where(name => Regex.IsMatch(name, regex))
                     .OrderBy(name => Guid.NewGuid())
-                    .Take(ApplicationCommands.Options.MaxChoiceAmount)
+                    .Take(Discord.Limits.ApplicationCommand.Option.MaxChoiceAmount)
                     .ToArray();
 
                 tagname.Choices.AddRange(matches);
@@ -265,14 +265,14 @@ namespace Un1ver5e.Bot.Services
                     .Select(tag => tag.Name)
                     .OrderBy(name => name),
                 "all" => _dbctx.Tags
-                    .Where(tag => tag.GuildId == guildId || tag.IsPublic)
+                    .Where(tag => tag.IsPublic || tag.GuildId == guildId)
                     .Where(tag => Regex.IsMatch(tag.Name, regex))
                     .Select(tag => tag.Name)
                     .OrderBy(name => name),
                 _ => throw new ArgumentOutOfRangeException(nameof(filter), "what the fuck")
             };
 
-            const int maxPageLen = LocalEmbed.MaxDescriptionLength - 6; //6 is for codeblock frame
+            const int maxPageLen = Message.Embed.MaxDescriptionLength - 6; //6 is for codeblock frame
             const int maxTagNameLen = Tag.MaxNameLength + 1; //1 is for newline symbol
 
             const int maxPageNamesCount = maxPageLen / maxTagNameLen;
@@ -283,7 +283,7 @@ namespace Un1ver5e.Bot.Services
             IEnumerable<Page> pages = rawPages
                 .Select((text, index) => new Page()
                 {
-                    Embeds =
+                    Embeds = new LocalEmbed[]
                     {
                         new LocalEmbed()
                         {

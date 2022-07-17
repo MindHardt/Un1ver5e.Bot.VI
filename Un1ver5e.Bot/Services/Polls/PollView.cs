@@ -43,9 +43,9 @@ namespace Un1ver5e.Bot.Services.Polls
         {
             foreach (var votes in _options.Values)
             {
-                votes.Remove(e.Member);
+                votes.Remove(e.Member!);
             }
-            _options[e.Button.Label].Add(e.Member);
+            _options[e.Button.Label!].Add(e.Member!);
             RefreshMessage();
         }
         private void RefreshMessage()
