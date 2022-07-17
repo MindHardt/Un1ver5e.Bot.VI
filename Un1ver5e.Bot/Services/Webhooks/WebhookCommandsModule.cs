@@ -53,7 +53,7 @@ namespace Un1ver5e.Bot.Services
 
             LocalWebhookMessage msg = new LocalWebhookMessage()
                 .AddEmbed(new LocalEmbed()
-                    .WithAuthor(Bot.CurrentUser)
+                    .WithAuthor(Bot.CurrentUser!)
                     .WithTitle("Получил этот вебхук! 💾"));
 
             await _dbctx.Webhooks.AddAsync(new Webhook() { Url = webhookurl });
