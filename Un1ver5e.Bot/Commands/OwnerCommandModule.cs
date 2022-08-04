@@ -10,6 +10,7 @@ using Qmmands;
 using Serilog.Core;
 using Serilog.Events;
 using System.Text;
+using Un1ver5e.Bot.Models;
 using Un1ver5e.Bot.Services.Database;
 
 namespace Un1ver5e.Bot.Commands

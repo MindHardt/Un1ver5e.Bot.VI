@@ -1,4 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
+using System.Reflection;
+using Un1ver5e.Bot.Models;
 using Un1ver5e.Bot.Services.Tags;
 using Un1ver5e.Bot.Services.Webhooks;
 
@@ -25,6 +28,21 @@ namespace Un1ver5e.Bot.Services.Database
             : base(options)
         {
             Database.EnsureCreated();
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder
+                .HasDbFunction(typeof(BotContext).GetRuntimeMethod(nameof(Tag.CanBeSeen), new[] { typeof(ulong) }))
+                .HasTranslation(args =>
+                    new SqlBinaryExpression(
+                        System.Linq.Expressions.ExpressionType.Or,
+                        args[0].))
+
+
+
+
+            base.OnModelCreating(modelBuilder);
         }
 
         public string GetCreateScript() => Database.GenerateCreateScript();

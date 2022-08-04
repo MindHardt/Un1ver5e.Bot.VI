@@ -72,7 +72,7 @@ namespace Un1ver5e.Bot
                     bot.Activities = new LocalActivity[] { new(splash, ActivityType.Watching) };
                     bot.Token = token;
                     bot.Prefixes = prefixes;
-                    bot.Intents |= GatewayIntent.DirectMessages | GatewayIntent.DirectReactions;
+                    bot.Intents |= GatewayIntents.DirectMessages | GatewayIntents.DirectReactions;
                 })
                 .Build();
         }

@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Disqord" Version="1.0.0-alpha2.9" />
+    <PackageReference Include="Disqord.Bot" Version="1.0.0-alpha2.9" />
+    <PackageReference Include="Disqord.Core" Version="1.0.0-alpha2.9" />
+    <PackageReference Include="Disqord.Extensions.Interactivity" Version="1.0.0-alpha2.9" />
+    <PackageReference Include="Disqord.Gateway" Version="1.0.0-alpha2.9" />
+    <PackageReference Include="Disqord.Gateway.Api" Version="1.0.0-alpha2.9" />
+    <PackageReference Include="Disqord.Webhook" Version="1.0.0-alpha2.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.6" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.5" />
@@ -20,9 +27,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Arklens\Arklens.csproj" />
     <ProjectReference Include="..\DefaultDiceService\DefaultDiceService.csproj" />
-    <ProjectReference Include="..\Disqord\src\Disqord.Bot\Disqord.Bot.csproj" />
-    <ProjectReference Include="..\Disqord\src\Disqord.Core\Disqord.Core.csproj" />
-    <ProjectReference Include="..\Disqord\src\Disqord\Disqord.csproj" />
   </ItemGroup>
 
 </Project>

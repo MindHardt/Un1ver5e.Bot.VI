@@ -1,4 +1,4 @@
-﻿namespace Un1ver5e.Bot.Services.Database
+﻿namespace Un1ver5e.Bot.Models
 {
     /// <summary>
     /// Represents a bot's admin (owner)

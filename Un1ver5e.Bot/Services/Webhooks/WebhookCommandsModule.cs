@@ -53,7 +53,7 @@ namespace Un1ver5e.Bot.Services
         //ADDWEBHOOK
         [SlashCommand("add-webhook")]
         [Description("Добавляет боту вебхук. Не используй если не понимаешь зачем.")]
-        [RequireAuthorPermissions(Permission.ManageWebhooks)]
+        [RequireAuthorPermissions(Permissions.ManageWebhooks)]
         public async ValueTask<IResult> AddWebhookCommand(
             [Name("Вебхук"), Description("URL вебхука")] string webhookurl)
         {

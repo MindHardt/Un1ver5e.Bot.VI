@@ -1,4 +1,7 @@
-﻿using System.Text;
+﻿using Disqord;
+using Disqord.Gateway;
+using System.Reflection.Metadata;
+using System.Text;
 
 namespace Un1ver5e.Bot
 {

@@ -3,108 +3,68 @@ using Disqord.Bot.Commands.Application;
 using Disqord.Extensions.Interactivity;
 using Disqord.Extensions.Interactivity.Menus.Paged;
 using Disqord.Gateway;
-using Disqord.Models;
 using Disqord.Rest;
 using Qmmands;
 using System.Text.RegularExpressions;
 using Un1ver5e.Bot.Commands;
+using Un1ver5e.Bot.Models;
 using Un1ver5e.Bot.Services.Database;
 using Un1ver5e.Bot.Services.Tags;
 using static Disqord.Discord.Limits;
 
 namespace Un1ver5e.Bot.Services
 {
-    public class TagsCommandsModule : DiscordApplicationGuildModuleBase
+    public class TagsApplicationCommandsModule : DiscordApplicationGuildModuleBase
     {
         private readonly BotContext _dbctx;
 
-        public TagsCommandsModule(BotContext dbctx)
+        public TagsApplicationCommandsModule(BotContext dbctx)
         {
             _dbctx = dbctx;
         }
 
-        //CREATE TAG
-        [MessageCommand("Создать тег")]
-        public async ValueTask CreateTagCommand(IMessage msg)
-        {
-            if (msg is not IUserMessage usermsg) throw new ArgumentException("Нельзя сделать тег из системного сообщения!");
-            if (string.IsNullOrWhiteSpace(usermsg.Content)) throw new ArgumentException("Тегу нужен текст.");
+        ////CREATE TAG
+        //[MessageCommand("Создать тег")]
+        //public async ValueTask CreateTagCommand(IMessage msg)
+        //{
+        //    if (msg is not IUserMessage usermsg) throw new ArgumentException("Нельзя сделать тег из системного сообщения!");
+        //    if (string.IsNullOrWhiteSpace(usermsg.Content)) throw new ArgumentException("Тегу нужен текст.");
 
-            Tag tag = new(usermsg, Context.Author.Id, Context.GuildId);
+        //    Tag tag = new(usermsg, Context.Author.Id, Context.GuildId);
 
-            string interactionID = Guid.NewGuid().ToString();
-            //Building Modal
-            LocalInteractionModalResponse modal = new LocalInteractionModalResponse()
-                .WithCustomId(interactionID)
-                .WithTitle("Название тега")
-                .WithComponents(
-                    LocalComponent.Row(
-                        new LocalTextInputComponent()
-                            .WithCustomId("name")
-                            .WithLabel("Имя")
-                            .WithMaximumInputLength(Tag.MaxNameLength)
-                            .WithStyle(TextInputComponentStyle.Short)
-                            .WithPlaceholder(interactionID)),
-                    LocalComponent.Row(
-                        new LocalSelectionComponent()
-                            .WithCustomId("publicity")
-                            .WithIsDisabled(await Bot.IsOwnerAsync(Context.AuthorId) == false)
-                            .WithPlaceholder("Серверный")
-                            .WithOptions(
-                                new LocalSelectionComponentOption()
-                                    .WithLabel("Серверный")
-                                    .WithValue("false")
-                                    .WithIsDefault(),
-                                new LocalSelectionComponentOption()
-                                    .WithLabel("Публичный")
-                                    .WithValue("true")))
-                        );
+        //    string interactionID = Guid.NewGuid().ToString();
+        //    //Building Modal
+            
+        //    tag.Name = name;
+        //    tag.IsPublic = bool.Parse(publicity);
 
-            await Context.Interaction.Response().SendModalAsync(modal);
+        //    //"Save or Discard" menu
+        //    LocalInteractionMessageResponse response = new LocalInteractionMessageResponse()
+        //        .WithContent(Context.Author.Mention)
+        //        .AddEmbed(await tag.GetDisplayAsync(Bot))
+        //        .AddComponent(new LocalRowComponent()
+        //            .AddComponent(new LocalButtonComponent()
+        //            {
+        //                CustomId = interactionID,
+        //                Emoji = LocalEmoji.Unicode("💾")
+        //            })
+        //            .AddComponent(DeleteThisButtonCommandModule.GetDeleteButton()));
 
-            //Reading modal (some black magic)
-            InteractionReceivedEventArgs? modalEventArgs = await Bot.WaitForInteractionAsync(Context.ChannelId, e => e.Interaction is IModalSubmitInteraction ms && ms.CustomId == interactionID);
-            if (modalEventArgs is null) return;
-            IModalSubmitInteraction modalSubmit = (modalEventArgs.Interaction as IModalSubmitInteraction)!;
-            IRowComponent row1 = (modalSubmit.Components[0] as IRowComponent)!;
-            ITextInputComponent nameField = (row1.Components[0] as ITextInputComponent)!;
+        //    await modalEventArgs.Interaction.Response().SendMessageAsync(response);
 
-            IRowComponent row2 = (modalSubmit.Components[1] as IRowComponent)!;
-            ISelectionComponent publicityField = (row2.Components[0] as ISelectionComponent)!;
-            ITransientEntity<ComponentJsonModel> publicityEntity = (publicityField as ITransientEntity<ComponentJsonModel>)!;
-            string publicity = publicityEntity.Model["values"]!.ToType<string[]>()![0]; //This is to be replaced once becomes available in disqord
+        //    InteractionReceivedEventArgs? buttonEventArgs = await Bot.WaitForInteractionAsync(Context.ChannelId, e => e.Interaction is IComponentInteraction ms && ms.CustomId == interactionID);
+        //    if (buttonEventArgs is null) return;
 
-            string name = nameField.Value!;
-            tag.Name = name;
-            tag.IsPublic = bool.Parse(publicity);
+        //    IComponentInteraction buttonPress = (buttonEventArgs.Interaction as IComponentInteraction)!;
+        //    IUserMessage buttonMsg = buttonPress.Message;
 
-            //"Save or Discard" menu
-            LocalInteractionMessageResponse response = new LocalInteractionMessageResponse()
-                .WithContent(Context.Author.Mention)
-                .AddEmbed(await tag.GetDisplayAsync(Bot))
-                .AddComponent(new LocalRowComponent()
-                    .AddComponent(new LocalButtonComponent()
-                    {
-                        CustomId = interactionID,
-                        Emoji = LocalEmoji.Unicode("💾")
-                    })
-                    .AddComponent(DeleteThisButtonCommandModule.GetDeleteButton()));
+        //    await _dbctx.Tags.AddAsync(tag);
+        //    await _dbctx.SaveChangesAsync();
 
-            await modalEventArgs.Interaction.Response().SendMessageAsync(response);
-
-            InteractionReceivedEventArgs? buttonEventArgs = await Bot.WaitForInteractionAsync(Context.ChannelId, e => e.Interaction is IComponentInteraction ms && ms.CustomId == interactionID);
-            if (buttonEventArgs is null) return;
-
-            IComponentInteraction buttonPress = (buttonEventArgs.Interaction as IComponentInteraction)!;
-            IUserMessage buttonMsg = buttonPress.Message;
-
-            await _dbctx.Tags.AddAsync(tag);
-            await _dbctx.SaveChangesAsync();
-
-            await buttonEventArgs.Interaction.Response()
-                .ModifyMessageAsync(new LocalInteractionMessageResponse()
-                .WithContent($"Успешно сохранил тег `{tag.Name}`!"));
-        }
+        //    await buttonEventArgs.Interaction.Response()
+        //        .ModifyMessageAsync(new LocalInteractionMessageResponse()
+        //        .WithContent($"Успешно сохранил тег `{tag.Name}`!"));
+        //}
 
 
         //GET TAG
@@ -118,14 +78,13 @@ namespace Un1ver5e.Bot.Services
             ulong guildId = Context.GuildId;
 
             Tag? tag = _dbctx.Tags
-                .Where(tag => tag.IsPublic || tag.GuildId == guildId)
+                .Where(tag => tag.CanBeSeen(guildId))
                 .Where(tag => tag.Name == tagname)
                 .FirstOrDefault();
 
             if (tag is null) throw new ArgumentException("Тег не найден. Возможно, он принадлежит другому серверу и не является публичным. Публичные теги могут создавать только администраторы бота.", nameof(tagname));
 
-            LocalInteractionMessageResponse response = new();
-            tag.PasteTo(response);
+            var response = tag.CreateMessage<LocalInteractionMessageResponse>();
 
             return Response(response);
         }
@@ -142,7 +101,7 @@ namespace Un1ver5e.Bot.Services
             ulong guildId = Context.GuildId;
 
             Tag? tag = _dbctx.Tags
-                .Where(tag => tag.IsPublic || tag.GuildId == guildId)
+                .Where(tag => tag.CanBeSeen(guildId))
                 .Where(tag => tag.Name == tagname)
                 .FirstOrDefault();
 
@@ -232,7 +191,7 @@ namespace Un1ver5e.Bot.Services
                 string regex = $".*{input}.*";
 
                 string[] matches = _dbctx.Tags
-                    .Where(tag => tag.IsPublic || tag.GuildId == Context.GuildId.RawValue)
+                    .Where(tag => tag.CanBeSeen(Context.GuildId.RawValue))
                     .Select(tag => tag.Name)
                     .Where(name => Regex.IsMatch(name, regex))
                     .OrderBy(name => Guid.NewGuid())
