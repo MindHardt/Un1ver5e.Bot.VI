@@ -7,12 +7,23 @@ namespace Un1ver5e.Bot.Commands
     public class DeleteThisButtonCommandModule : DiscordComponentModuleBase
     {
         private const string DeleteButtonCustomId = "mo_delete_this";
+
+        /// <summary>
+        /// Gets a button which will delete its message upon press.
+        /// </summary>
+        /// <returns></returns>
         public static LocalButtonComponent GetDeleteButton() => new()
         {
             Emoji = LocalEmoji.Unicode("🗑"),
             CustomId = DeleteButtonCustomId,
             Style = LocalButtonComponentStyle.Danger
         };
+
+        /// <summary>
+        /// Gets a button which will delete its message upon press.
+        /// </summary>
+        /// <returns>A <see cref="LocalRowComponent"/> which only contains delete button.</returns>
+        public static LocalRowComponent GetDeleteButtonRow() => LocalComponent.Row(GetDeleteButton());
 
         [ButtonCommand(DeleteButtonCustomId)]
         public async ValueTask DeleteMessageButtonCommand()
