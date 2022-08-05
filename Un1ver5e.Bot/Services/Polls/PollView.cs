@@ -25,7 +25,7 @@ namespace Un1ver5e.Bot.Services.Polls
                 AddComponent(button);
             }
             RefreshMessage();
-            ScheduleEndOfPoll(pollTime);
+            _ = ScheduleEndOfPoll(pollTime);
         }
 
         private async Task ScheduleEndOfPoll(TimeSpan voteTime)
@@ -71,7 +71,7 @@ namespace Un1ver5e.Bot.Services.Polls
                 .WithTitle(_header)
                 .WithFields(fields);
         }
-        private string GetPercentageBar(int current, int total)
+        private static string GetPercentageBar(int current, int total)
         {
             if (current == 0) return "⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜ 0 [0%]";
             if (current == total) return $"🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦 {total} [100%]";
@@ -84,7 +84,7 @@ namespace Un1ver5e.Bot.Services.Polls
             }
             for (int i = coloredBars; i < 9; i++)
             {
-                bars.Append("⬜");
+                bars.Append('⬜');
             }
 
             int percentage = current * 100 / total;

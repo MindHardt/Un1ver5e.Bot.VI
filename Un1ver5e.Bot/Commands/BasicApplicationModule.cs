@@ -67,7 +67,7 @@ namespace Un1ver5e.Bot.Commands
             [Name("Эмоджи"), Description("Интересующий кастомный эмоджи.")] ICustomEmoji emoji)
         {
             string url = emoji.GetUrl(CdnAssetFormat.Png, 128);
-            string name = emoji.Name;
+            string name = emoji.Name!;
 
             LocalEmbed embed = new()
             {
