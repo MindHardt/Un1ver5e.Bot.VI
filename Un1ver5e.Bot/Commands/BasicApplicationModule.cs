@@ -9,7 +9,7 @@ using Un1ver5e.Bot.Services.RateOptionsProvider;
 
 namespace Un1ver5e.Bot.Commands
 {
-    public class BasicApplicationModule : DiscordApplicationModuleBase
+    public class BasicApplicationModule : DiscordApplicationGuildModuleBase
     {
         //RATE
         [MessageCommand("Оценить")]
@@ -23,20 +23,17 @@ namespace Un1ver5e.Bot.Commands
             string rateoption = Bot.Services.GetRequiredService<IRateOptionsProvider>().GetOption(new Random(randomSeed));
             //Each call on the same message will result the same
 
-            ulong messageID = message.Id;
-            ulong channelID = Context.ChannelId;
-            ulong guildID = Context.GuildId!.Value;
 
-            string msgLink = $"[Исходное сообщение](https://discord.com/channels/{guildID}/{channelID}/{messageID})";
+            string msgLink = $"[Исходное сообщение]({Discord.MessageJumpLink(Context.GuildId, Context.ChannelId, message.Id)})";
             //Link to original message
 
-            LocalEmbed embed = new()
-            {
-                Title = rateoption,
-                Description = msgLink
-            };
+            LocalInteractionMessageResponse response = new LocalInteractionMessageResponse()
+                .AddEmbed(new LocalEmbed()
+                    .WithTitle(rateoption)
+                    .WithDescription(msgLink))
+                .AddComponent(DeleteThisButtonCommandModule.GetDeleteButtonRow());
 
-            return Response(embed);
+            return Response(response);
         }
 
 
