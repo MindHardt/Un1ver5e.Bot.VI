@@ -34,3 +34,5 @@ Technologies used:
 - [ImageSharp](https://github.com/SixLabors/ImageSharp)
 
 The bot is hosted on Raspberry Pi 4 powered by Ubuntu Server 21.10 (previously via Docker, now manual Deployment)
+
+![Avatar goes here](/.github/Avatar.png)
