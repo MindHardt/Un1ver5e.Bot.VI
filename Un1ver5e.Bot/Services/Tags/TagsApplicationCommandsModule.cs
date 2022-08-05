@@ -9,7 +9,6 @@ using System.Text.RegularExpressions;
 using Un1ver5e.Bot.Commands;
 using Un1ver5e.Bot.Models;
 using Un1ver5e.Bot.Services.Database;
-using Un1ver5e.Bot.Services.Tags;
 using static Disqord.Discord.Limits;
 
 namespace Un1ver5e.Bot.Services
@@ -34,7 +33,7 @@ namespace Un1ver5e.Bot.Services
 
         //    string interactionID = Guid.NewGuid().ToString();
         //    //Building Modal
-            
+
         //    tag.Name = name;
         //    tag.IsPublic = bool.Parse(publicity);
 
@@ -78,7 +77,7 @@ namespace Un1ver5e.Bot.Services
             ulong guildId = Context.GuildId;
 
             Tag? tag = _dbctx.Tags
-                .Where(tag => tag.CanBeSeen(guildId))
+                .ThatAreSeenIn(guildId)
                 .Where(tag => tag.Name == tagname)
                 .FirstOrDefault();
 
@@ -101,7 +100,7 @@ namespace Un1ver5e.Bot.Services
             ulong guildId = Context.GuildId;
 
             Tag? tag = _dbctx.Tags
-                .Where(tag => tag.CanBeSeen(guildId))
+                .ThatAreSeenIn(guildId)
                 .Where(tag => tag.Name == tagname)
                 .FirstOrDefault();
 
@@ -191,7 +190,7 @@ namespace Un1ver5e.Bot.Services
                 string regex = $".*{input}.*";
 
                 string[] matches = _dbctx.Tags
-                    .Where(tag => tag.CanBeSeen(Context.GuildId.RawValue))
+                    .ThatAreSeenIn(Context.GuildId.RawValue)
                     .Select(tag => tag.Name)
                     .Where(name => Regex.IsMatch(name, regex))
                     .OrderBy(name => Guid.NewGuid())

@@ -2,10 +2,7 @@
 using Disqord.Bot.Commands.Application;
 using Disqord.Bot.Commands.Components;
 using Disqord.Bot.Commands.Text;
-using Disqord.Extensions.Interactivity;
-using Disqord.Gateway;
 using Disqord.Rest;
-using Qmmands;
 using Qmmands.Text;
 using Un1ver5e.Bot.Models;
 
@@ -48,7 +45,7 @@ namespace Un1ver5e.Bot.Services.Tags
 
         }
 
-        
+
         public class ApplicationCommands : DiscordApplicationGuildModuleBase
         {
             [MessageCommand("Создать тег")]
@@ -64,7 +61,7 @@ namespace Un1ver5e.Bot.Services.Tags
             [TextCommand("create_tag")]
             public async ValueTask CreateTag()
             {
-                if (Context.Message.ReferencedMessage.HasValue == false) 
+                if (Context.Message.ReferencedMessage.HasValue == false)
                     throw new ArgumentException("Эта команда применяется в реплаях.");
 
                 string messageLink = Discord.MessageJumpLink(Context.GuildId, Context.ChannelId, Context.Message.Id);

@@ -118,8 +118,12 @@ namespace Un1ver5e.Bot.Models
             };
         }
 
-        public bool CanBeSeen(ulong guildId) => IsPublic || GuildId == guildIdж
-
+        /// <summary>
+        /// Creates a tag with specified data whos <see cref="Name"/> is randomized via <see cref="Guid.NewGuid()"/>
+        /// </summary>
+        /// <param name="content"></param>
+        /// <param name="authorId"></param>
+        /// <param name="guildId"></param>
         public Tag(string content, ulong authorId, ulong guildId)
         {
             Name = Guid.NewGuid().ToString();

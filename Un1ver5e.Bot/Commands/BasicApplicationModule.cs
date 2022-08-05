@@ -1,16 +1,9 @@
 ﻿using Disqord;
 using Disqord.Bot.Commands;
 using Disqord.Bot.Commands.Application;
-using Disqord.Rest;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Qmmands;
-using Serilog.Core;
-using Serilog.Events;
 using System.Diagnostics;
-using System.Text;
-using Un1ver5e.Bot.Services.Database;
 using Un1ver5e.Bot.Services.Dice;
 using Un1ver5e.Bot.Services.RateOptionsProvider;
 

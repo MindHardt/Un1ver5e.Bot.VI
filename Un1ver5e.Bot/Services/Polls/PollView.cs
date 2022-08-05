@@ -73,8 +73,8 @@ namespace Un1ver5e.Bot.Services.Polls
         }
         private string GetPercentageBar(int current, int total)
         {
-            if (current == 0)       return "⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜ 0 [0%]";
-            if (current == total)   return $"🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦 {total} [100%]";
+            if (current == 0) return "⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜ 0 [0%]";
+            if (current == total) return $"🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦 {total} [100%]";
 
             int coloredBars = ((int)Math.Round(current * 8f / total));
             StringBuilder bars = new("🟦", 8);
