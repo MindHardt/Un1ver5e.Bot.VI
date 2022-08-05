@@ -1,5 +1,4 @@
-﻿using Disqord;
-using Disqord.Bot.Hosting;
+﻿using Disqord.Bot.Hosting;
 using Disqord.Gateway;
 using Disqord.Webhook;
 using Microsoft.EntityFrameworkCore;
@@ -47,7 +46,7 @@ namespace Un1ver5e.Bot
                     .AddSingleton<Random>()
                     .AddSingleton<LoggingLevelSwitch>()
 
-                    .AddTransient<IRateOptionsProvider, ConfigurationRateOptionsProvider>()
+                    .AddTransient<IRateOptionsProvider, BotContextRateOptionsProvider>()
 
                     .AddSingleton<IDiceService, DefaultDiceService>()
 
@@ -65,11 +64,9 @@ namespace Un1ver5e.Bot
                 {
                     IConfigurationSection config = context.Configuration.GetSection("discord_config");
 
-                    string splash = config.GetSection("splashes").Get<string[]>().GetRandomElement();
                     string token = config["token"];
                     string[] prefixes = config.GetSection("prefixes").Get<string[]>();
 
-                    bot.Activities = new LocalActivity[] { new(splash, ActivityType.Watching) };
                     bot.Token = token;
                     bot.Prefixes = prefixes;
                     bot.Intents |= GatewayIntents.DirectMessages | GatewayIntents.DirectReactions;
