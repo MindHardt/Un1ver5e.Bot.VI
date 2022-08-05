@@ -4,7 +4,7 @@ using Disqord.Rest;
 
 namespace Un1ver5e.Bot.Commands
 {
-    public class DeleteThisButtonCommandModule : DiscordComponentModuleBase
+    public class DeleteThisButtonComponentCommand : DiscordComponentModuleBase
     {
         private const string DeleteButtonCustomId = "mo_delete_this";
 
