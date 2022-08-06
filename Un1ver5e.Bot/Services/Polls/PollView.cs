@@ -47,6 +47,7 @@ namespace Un1ver5e.Bot.Services.Polls
             }
             _options[e.Button.Label!].Add(e.Member!);
             RefreshMessage();
+            await Task.CompletedTask; //I dont like warnings, ok?
         }
         private void RefreshMessage()
         {

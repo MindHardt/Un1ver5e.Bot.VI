@@ -120,7 +120,7 @@ namespace Un1ver5e.Bot.Services
                         Style = LocalButtonComponentStyle.Secondary,
                         IsDisabled = isAuthor == false && await Bot.IsOwnerAsync(Context.AuthorId) == false
                     },
-                    DeleteThisButtonCommandModule.GetDeleteButton()
+                    DeleteThisButtonComponentCommand.GetDeleteButton()
                 }
             };
 
@@ -166,7 +166,7 @@ namespace Un1ver5e.Bot.Services
                 await modalEventArgs.Interaction.Response()
                 .SendMessageAsync(new LocalInteractionMessageResponse()
                 .WithContent($"Успешно удалил тег `{tag.Name}`!")
-                .AddComponent(LocalComponent.Row(DeleteThisButtonCommandModule.GetDeleteButton())));
+                .AddComponent(LocalComponent.Row(DeleteThisButtonComponentCommand.GetDeleteButton())));
             }
             else
             {
@@ -194,7 +194,7 @@ namespace Un1ver5e.Bot.Services
                     .Select(tag => tag.Name)
                     .Where(name => Regex.IsMatch(name, regex))
                     .OrderBy(name => Guid.NewGuid())
-                    .Take(Discord.Limits.ApplicationCommand.Option.MaxChoiceAmount)
+                    .Take(Disqord.Discord.Limits.ApplicationCommand.Option.MaxChoiceAmount)
                     .ToArray();
 
                 tagname.Choices.AddRange(matches);

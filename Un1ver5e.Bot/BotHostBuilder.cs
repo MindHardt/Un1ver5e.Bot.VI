@@ -1,4 +1,6 @@
-﻿using Disqord.Bot.Hosting;
+﻿using Disqord;
+using Disqord.Bot;
+using Disqord.Bot.Hosting;
 using Disqord.Gateway;
 using Disqord.Webhook;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +9,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Core;
+using Serilog.Sinks.Discord;
 using Serilog.Sinks.SystemConsole.Themes;
+using System.Text.RegularExpressions;
 using Un1ver5e.Bot.Services.Database;
 using Un1ver5e.Bot.Services.Dice;
 using Un1ver5e.Bot.Services.RateOptionsProvider;
@@ -25,7 +29,7 @@ namespace Un1ver5e.Bot
                     config.ValidateOnBuild = true;
                     config.ValidateScopes = true;
                 })
-                .UseSerilog((_, services, logger) =>
+                .UseSerilog((ctx, services, logger) =>
                 {
                     string filePath = $"Logs/Log-.log";
 
@@ -33,6 +37,13 @@ namespace Un1ver5e.Bot
                     .MinimumLevel.ControlledBy(services.GetRequiredService<LoggingLevelSwitch>())
                     .WriteTo.Console(theme: AnsiConsoleTheme.Literate)
                     .WriteTo.File(filePath, rollingInterval: RollingInterval.Day, shared: true);
+
+                    string? webhook = ctx.Configuration.GetRequiredSection("discord_config").GetSection("logs_webhook_url").Get<string>();
+                    if (webhook is not null)
+                    {
+                        (ulong Id, string Token) webhookData = ParseWebhookUrl(webhook);
+                        logger.WriteTo.Discord(webhookData.Id, webhookData.Token, restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Warning);
+                    }
                 })
                 .ConfigureHostConfiguration(config =>
                 {
@@ -54,7 +65,10 @@ namespace Un1ver5e.Bot
 
                     .AddDbContext<BotContext>(options =>
                     {
-                        string connstr = string.Join(';', ctx.Configuration.GetSection("db_connstr_args").Get<string[]>());
+                        string[]? connstrArgs = ctx.Configuration.GetSection("db_connstr_args").Get<string[]>();
+                        ArgumentNullException.ThrowIfNull(connstrArgs);
+
+                        string connstr = string.Join(';', connstrArgs);
 
                         options.UseNpgsql(connstr);
                     });
@@ -62,10 +76,10 @@ namespace Un1ver5e.Bot
                 })
                 .ConfigureDiscordBot<Un1ver5eBot>((context, bot) =>
                 {
-                    IConfigurationSection config = context.Configuration.GetSection("discord_config");
+                    IConfigurationSection config = context.Configuration.GetRequiredSection("discord_config");
 
-                    string token = config["token"];
-                    string[] prefixes = config.GetSection("prefixes").Get<string[]>();
+                    string? token = config["token"]; ;
+                    string[] prefixes = config.GetSection("prefixes").Get<string[]>() ?? Array.Empty<string>();
 
                     bot.Token = token;
                     bot.Prefixes = prefixes;
@@ -74,5 +88,14 @@ namespace Un1ver5e.Bot
                 .Build();
         }
 
+        private static (ulong id, string token) ParseWebhookUrl(string url)
+        {
+            Match match = Regex.Match(url, "https://discord.com/api/webhooks/(?<Id>\\d*)/(?<Token>.*)");
+
+            ulong id = ulong.Parse(match.Groups["Id"].Value);
+            string token = match.Groups["Token"].Value;
+
+            return (id, token);
+        }
     }
 }

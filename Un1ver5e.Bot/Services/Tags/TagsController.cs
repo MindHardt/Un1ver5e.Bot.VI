@@ -64,7 +64,7 @@ namespace Un1ver5e.Bot.Services.Tags
                 if (Context.Message.ReferencedMessage.HasValue == false)
                     throw new ArgumentException("Эта команда применяется в реплаях.");
 
-                string messageLink = Discord.MessageJumpLink(Context.GuildId, Context.ChannelId, Context.Message.Id);
+                string messageLink = Disqord.Discord.MessageJumpLink(Context.GuildId, Context.ChannelId, Context.Message.Id);
                 string buttonId = Guid.NewGuid().ToString();
 
                 LocalButtonComponent button = new()

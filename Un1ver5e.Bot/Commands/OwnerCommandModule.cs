@@ -56,7 +56,6 @@ namespace Un1ver5e.Bot.Commands
             await Bot.Services.GetRequiredService<IHost>().StopAsync();
         }
 
-
         [SlashCommand("o-verbosity")]
         [Description("(Только для администраторов)")]
         public IResult LogLevelSwitch(
@@ -105,7 +104,7 @@ namespace Un1ver5e.Bot.Commands
 
             IEnumerable<Page> pages = Directory.GetFiles("./Logs")
                 .Select((file, index) => $"{index}. {file[(file.LastIndexOf('\\') + 1)..]}\n")
-                .ChunkAtPages(Discord.Limits.Message.MaxContentLength - 6)
+                .ChunkAtPages(Disqord.Discord.Limits.Message.MaxContentLength - 6)
                 .Select(p => new Page().WithContent($"```{p}```"));
 
             return Pages(pages);

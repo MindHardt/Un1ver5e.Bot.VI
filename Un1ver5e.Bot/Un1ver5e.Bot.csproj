@@ -8,20 +8,21 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Disqord" Version="1.0.0-alpha2.9" />
-    <PackageReference Include="Disqord.Bot" Version="1.0.0-alpha2.9" />
-    <PackageReference Include="Disqord.Core" Version="1.0.0-alpha2.9" />
-    <PackageReference Include="Disqord.Extensions.Interactivity" Version="1.0.0-alpha2.9" />
-    <PackageReference Include="Disqord.Gateway" Version="1.0.0-alpha2.9" />
-    <PackageReference Include="Disqord.Gateway.Api" Version="1.0.0-alpha2.9" />
-    <PackageReference Include="Disqord.Webhook" Version="1.0.0-alpha2.9" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.6" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.5" />
-    <PackageReference Include="Serilog" Version="2.11.0" />
-    <PackageReference Include="Serilog.Extensions.Hosting" Version="4.2.0" />
-    <PackageReference Include="Serilog.Sinks.Console" Version="4.0.1" />
-    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+    <PackageReference Include="Disqord" Version="1.0.0-alpha2.11" />
+    <PackageReference Include="Disqord.Bot" Version="1.0.0-alpha2.11" />
+    <PackageReference Include="Disqord.Core" Version="1.0.0-alpha2.11" />
+    <PackageReference Include="Disqord.Extensions.Interactivity" Version="1.0.0-alpha2.11" />
+    <PackageReference Include="Disqord.Gateway" Version="1.0.0-alpha2.11" />
+    <PackageReference Include="Disqord.Gateway.Api" Version="1.0.0-alpha2.11" />
+    <PackageReference Include="Disqord.Webhook" Version="1.0.0-alpha2.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.0-preview.6.22329.4" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0-preview.6.22324.4" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.0-preview.6" />
+    <PackageReference Include="Serilog" Version="2.12.0-dev-01479" />
+    <PackageReference Include="Serilog.Extensions.Hosting" Version="5.0.1" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="4.0.2-dev-00890" />
+    <PackageReference Include="Serilog.Sinks.Discord" Version="1.2.1" />
+    <PackageReference Include="Serilog.Sinks.File" Version="5.0.1-dev-00947" />
   </ItemGroup>
 
   <ItemGroup>

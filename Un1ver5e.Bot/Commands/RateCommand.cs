@@ -20,14 +20,14 @@ namespace Un1ver5e.Bot.Commands
             //Each call on the same message will result the same
 
 
-            string msgLink = $"[Исходное сообщение]({Discord.MessageJumpLink(Context.GuildId, Context.ChannelId, message.Id)})";
+            string msgLink = $"[Исходное сообщение]({Disqord.Discord.MessageJumpLink(Context.GuildId, Context.ChannelId, message.Id)})";
             //Link to original message
 
             LocalInteractionMessageResponse response = new LocalInteractionMessageResponse()
                 .AddEmbed(new LocalEmbed()
                     .WithTitle(rateoption)
                     .WithDescription(msgLink))
-                .AddComponent(DeleteThisButtonCommandModule.GetDeleteButtonRow());
+                .AddComponent(DeleteThisButtonComponentCommand.GetDeleteButtonRow());
 
             return Response(response);
         }

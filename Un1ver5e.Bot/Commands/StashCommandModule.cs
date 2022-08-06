@@ -21,7 +21,7 @@ namespace Un1ver5e.Bot.Commands
                 .AddEmbed(new LocalEmbed()
                     .WithDescription($"Сохранил для вас [Сообщение]({jumpUrl})")
                     .WithAuthor(author))
-                .AddComponent(DeleteThisButtonCommandModule.GetDeleteButtonRow());
+                .AddComponent(DeleteThisButtonComponentCommand.GetDeleteButtonRow());
 
         /// <summary>
         /// Gets a message that says user that they have no data stashed.
@@ -32,7 +32,7 @@ namespace Un1ver5e.Bot.Commands
             where TMessage : LocalMessageBase, new() => new TMessage()
                 .AddEmbed(new LocalEmbed()
                     .WithDescription("🛑 У вас нет сохраненки! Чтобы создать ее используйте контекстную команду \"Запомнить\""))
-                .AddComponent(DeleteThisButtonCommandModule.GetDeleteButtonRow());
+                .AddComponent(DeleteThisButtonComponentCommand.GetDeleteButtonRow());
 
         /// <summary>
         /// Gets a message that containes link to a stashed message.
@@ -46,7 +46,7 @@ namespace Un1ver5e.Bot.Commands
                 .AddEmbed(new LocalEmbed()
                     .WithDescription($"Ваше сохраненное [Сообщение]({jumpUrl})")
                     .WithAuthor(author))
-                .AddComponent(DeleteThisButtonCommandModule.GetDeleteButtonRow());
+                .AddComponent(DeleteThisButtonComponentCommand.GetDeleteButtonRow());
     }
 
     public class StashApplicationCommandModule : DiscordApplicationGuildModuleBase
@@ -57,7 +57,7 @@ namespace Un1ver5e.Bot.Commands
             IStashData data = new DefaultStashData(msg, Context);
             IStashData.Stash(Context.AuthorId, data);
 
-            string jumpUrl = Discord.MessageJumpLink(Context.GuildId, Context.ChannelId, msg.Id);
+            string jumpUrl = Disqord.Discord.MessageJumpLink(Context.GuildId, Context.ChannelId, msg.Id);
 
             var response = StashCommandsHelper.GetSavedOkMessage<LocalInteractionMessageResponse>(jumpUrl, Context.Author);
             return Response(response);
@@ -71,7 +71,7 @@ namespace Un1ver5e.Bot.Commands
 
             if (data is null) return Response(StashCommandsHelper.GetNoStashFoundMessage<LocalInteractionMessageResponse>());
 
-            string jumpUrl = Discord.MessageJumpLink(data.Context.GuildId, data.Context.ChannelId, data.Message.Id);
+            string jumpUrl = Disqord.Discord.MessageJumpLink(data.Context.GuildId, data.Context.ChannelId, data.Message.Id);
             var response = StashCommandsHelper.GetStashedMessageLink<LocalInteractionMessageResponse>(jumpUrl, Context.Author);
 
             return Response(response);
@@ -90,7 +90,7 @@ namespace Un1ver5e.Bot.Commands
             IStashData data = new DefaultStashData(msg, Context);
             IStashData.Stash(Context.AuthorId, data);
 
-            string jumpUrl = Discord.MessageJumpLink(Context.GuildId, Context.ChannelId, msg.Id);
+            string jumpUrl = Disqord.Discord.MessageJumpLink(Context.GuildId, Context.ChannelId, msg.Id);
 
             var response = StashCommandsHelper.GetSavedOkMessage<LocalMessage>(jumpUrl, Context.Author);
             return Response(response);
