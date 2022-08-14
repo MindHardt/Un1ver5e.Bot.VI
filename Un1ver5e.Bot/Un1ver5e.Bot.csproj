@@ -26,7 +26,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Arklens\Arklens.csproj" />
     <ProjectReference Include="..\DefaultDiceService\DefaultDiceService.csproj" />
   </ItemGroup>
 
