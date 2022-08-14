@@ -3,7 +3,7 @@ using Disqord.Extensions.Interactivity.Menus;
 using Qmmands;
 using Un1ver5e.Bot.Services.Polls;
 
-namespace Un1ver5e.Bot.Services
+namespace Un1ver5e.Bot.Commands
 {
     public class PollCommandsModule : DiscordApplicationGuildModuleBase
     {

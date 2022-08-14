@@ -1,4 +1,4 @@
-﻿namespace Un1ver5e.Bot.Services.Webhooks
+﻿namespace Un1ver5e.Bot.Models
 {
     public record Webhook
     {

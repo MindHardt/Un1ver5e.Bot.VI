@@ -16,7 +16,6 @@ using System.Text.RegularExpressions;
 using Un1ver5e.Bot.Models;
 using Un1ver5e.Bot.Services.Database;
 using Un1ver5e.Bot.Services.Dice;
-using Un1ver5e.Bot.Services.RateOptionsProvider;
 
 namespace Un1ver5e.Bot
 {

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 
-namespace Un1ver5e.Bot.Services.RateOptionsProvider
+//This is not used now
+namespace Un1ver5e.Bot.Models
 {
     public class ConfigurationRateOptionsProvider : IRateOptionsProvider
     {

@@ -59,7 +59,7 @@ namespace Un1ver5e.Bot.Commands
             _storage = storage;
         }
 
-        [MessageCommand("Запомнить")]
+        [MessageCommand("Запомни")]
         public IResult RememberThis(IMessage msg)
         {
             IStashData data = new DefaultStashData(msg, Context);
@@ -71,7 +71,7 @@ namespace Un1ver5e.Bot.Commands
             return Response(response);
         }
 
-        [SlashCommand("stash")]
+        [SlashCommand("вспомни")]
         [Description("Показывает вашу сохраненку (Команда \"Запомнить\")")]
         public IResult RemindMe()
         {

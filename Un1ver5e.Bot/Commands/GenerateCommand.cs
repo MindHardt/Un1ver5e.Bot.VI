@@ -6,7 +6,7 @@ namespace Un1ver5e.Bot.Commands
 {
     public class GenerateCommand : DiscordApplicationGuildModuleBase
     {
-        [SlashCommand("generate")]
+        [SlashCommand("сгенерируй")]
         [Description("Нейросетки делают картинки")]
         public async ValueTask<IResult> Generate(
             [Name("Тема"), Description("Картинку чего генерируем.")]

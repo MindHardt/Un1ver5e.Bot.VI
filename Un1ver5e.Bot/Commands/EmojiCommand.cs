@@ -6,7 +6,7 @@ namespace Un1ver5e.Bot.Commands
 {
     public class EmojiCommand : DiscordApplicationGuildModuleBase
     {
-        [SlashCommand("emoji")]
+        [SlashCommand("эмоджи")]
         [Description("Дает ссылку на изображение эмоджи.")]
         public IResult Emoji(
             [Name("Эмоджи"), Description("Интересующий кастомный эмоджи.")] ICustomEmoji emoji)

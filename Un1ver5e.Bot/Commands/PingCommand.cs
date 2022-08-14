@@ -7,7 +7,7 @@ namespace Un1ver5e.Bot.Commands
 {
     public class PingCommand : DiscordApplicationGuildModuleBase
     {
-        [SlashCommand("ping")]
+        [SlashCommand("пинг")]
         [Description("Проверяем живой ли бот")]
         public IResult Ping()
         {

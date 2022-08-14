@@ -2,11 +2,12 @@
 {
     public record Intelligence : AttributeStat
     {
+        public Intelligence(int value) : base(value)
+        {
+        }
+
         public override string Acronym => "ИНТ";
 
-        public static implicit operator Intelligence(int value)
-        {
-            return new Intelligence() { Value = value };
-        }
+        public static implicit operator Intelligence(int value) => new(value);
     }
 }

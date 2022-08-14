@@ -23,5 +23,10 @@
         {
             return GetRawValue() + ((IStat)this).GetBuffSum();
         }
+
+        public AttributeStat(int value)
+        {
+            Value = value;
+        }
     }
 }

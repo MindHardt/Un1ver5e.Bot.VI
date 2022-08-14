@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Un1ver5e.Bot.Models;
-using Un1ver5e.Bot.Services.Webhooks;
 
 namespace Un1ver5e.Bot.Services.Database
 {

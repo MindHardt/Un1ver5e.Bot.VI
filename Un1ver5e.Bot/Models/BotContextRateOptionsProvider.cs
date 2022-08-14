@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Un1ver5e.Bot.Services.Database;
 
-namespace Un1ver5e.Bot.Services.RateOptionsProvider
+namespace Un1ver5e.Bot.Models
 {
     public class BotContextRateOptionsProvider : IRateOptionsProvider
     {

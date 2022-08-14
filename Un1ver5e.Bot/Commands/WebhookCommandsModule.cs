@@ -4,10 +4,10 @@ using Disqord.Bot.Commands.Application;
 using Disqord.Webhook;
 using Microsoft.Extensions.Logging;
 using Qmmands;
+using Un1ver5e.Bot.Models;
 using Un1ver5e.Bot.Services.Database;
-using Un1ver5e.Bot.Services.Webhooks;
 
-namespace Un1ver5e.Bot.Services
+namespace Un1ver5e.Bot.Commands
 {
     public class WebhookCommandsModule : DiscordApplicationModuleBase
     {
@@ -29,7 +29,7 @@ namespace Un1ver5e.Bot.Services
 
             LocalWebhookMessage msg = new LocalWebhookMessage().WithContent(message.Content);
 
-            foreach (Webhook webhook in _dbctx.Webhooks)
+            await foreach (Webhook webhook in _dbctx.Webhooks.AsAsyncEnumerable())
             {
                 try
                 {
@@ -39,7 +39,7 @@ namespace Un1ver5e.Bot.Services
                 }
                 catch (Exception)
                 {
-                    Logger.LogWarning("An exception occured while broadcasting to webhook", webhook.Url);
+                    Logger.LogWarning("An exception occured while broadcasting to webhook {webhook}", $"...{webhook.Url[^16]}");
                 }
             }
 

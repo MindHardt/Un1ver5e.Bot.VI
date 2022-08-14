@@ -2,11 +2,12 @@
 {
     public record Wisdom : AttributeStat
     {
+        public Wisdom(int value) : base(value)
+        {
+        }
+
         public override string Acronym => "МДР";
 
-        public static implicit operator Wisdom(int value)
-        {
-            return new Wisdom() { Value = value };
-        }
+        public static implicit operator Wisdom(int value) => new(value);
     }
 }
