@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Qmmands;
 using System.Diagnostics;
 using Un1ver5e.Bot.Services.Dice;
-using Un1ver5e.Bot.Services.RateOptionsProvider;
 
 namespace Un1ver5e.Bot.Commands
 {
