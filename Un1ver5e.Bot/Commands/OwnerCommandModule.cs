@@ -59,13 +59,27 @@ namespace Un1ver5e.Bot.Commands
         [SlashCommand("o-verbosity")]
         [Description("(Только для администраторов)")]
         public IResult LogLevelSwitch(
+            [Name("Логгер")] string logger,
             [Name("Уровень")] LogEventLevel level)
         {
-            LoggingLevelSwitch levelSwitch = Context.Services.GetRequiredService<LoggingLevelSwitch>();
+            var switches = Context.Services.GetRequiredService<ILoggingLevelSwitchCollection>();
 
-            levelSwitch.MinimumLevel = level;
+            LoggingLevelSwitch? selectedSwitch = switches.GetSwitch(logger);
+            if (selectedSwitch is null) return Results.Failure("Bad switch");
+
+            selectedSwitch.MinimumLevel = level;
             return Response(new LocalInteractionMessageResponse().WithContent(level.ToString()).WithIsEphemeral());
         }
+        [AutoComplete("o-verbosity")]
+        public void LogLevelSwitchAutoComplete([Name("Уровень")] AutoComplete<string> level)
+        {
+            if (level.IsFocused)
+            {
+                var switches = Context.Services.GetRequiredService<ILoggingLevelSwitchCollection>();
+                level.Choices.AddRange(switches.GetAllSwitches().Keys);
+            }
+        }
+
 
 
         [SlashCommand("o-sqlscript")]
