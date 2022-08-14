@@ -9,9 +9,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Core;
+using Serilog.Events;
 using Serilog.Sinks.Discord;
 using Serilog.Sinks.SystemConsole.Themes;
 using System.Text.RegularExpressions;
+using Un1ver5e.Bot.Models;
 using Un1ver5e.Bot.Services.Database;
 using Un1ver5e.Bot.Services.Dice;
 using Un1ver5e.Bot.Services.RateOptionsProvider;
@@ -31,18 +33,42 @@ namespace Un1ver5e.Bot
                 })
                 .UseSerilog((ctx, services, logger) =>
                 {
-                    string filePath = $"Logs/Log-.log";
+                    //Here I get a logging level switch collection object which stores switches, allowing to change verbosity of different sinks during runtime
+                    ILoggingLevelSwitchCollection switches = services.GetRequiredService<ILoggingLevelSwitchCollection>();
 
-                    logger
-                    .MinimumLevel.ControlledBy(services.GetRequiredService<LoggingLevelSwitch>())
-                    .WriteTo.Console(theme: AnsiConsoleTheme.Literate)
-                    .WriteTo.File(filePath, rollingInterval: RollingInterval.Day, shared: true);
+                    //CONSOLE LOGGER
+                    LoggingLevelSwitch consoleSwitch = switches.AddSwitch("Console", new LoggingLevelSwitch(LogEventLevel.Information));
+                    ILogger consoleLogger = new LoggerConfiguration()
+                        .WriteTo.Console(theme: AnsiConsoleTheme.Literate)
+                        .MinimumLevel.ControlledBy(consoleSwitch)
+                        .CreateLogger();
+                    logger.WriteTo.Logger(consoleLogger);
 
+                    //FILE LOGGER
+                    const string filePath = $"Logs/Log-.log";
+                    LoggingLevelSwitch fileSwitch = switches.AddSwitch("File", new LoggingLevelSwitch(LogEventLevel.Information));
+                    ILogger fileLogger = new LoggerConfiguration()
+                        .WriteTo.File(filePath, rollingInterval: RollingInterval.Day, shared: true)
+                        .MinimumLevel.ControlledBy(fileSwitch)
+                        .CreateLogger();
+                    logger.WriteTo.Logger(fileLogger);
+
+                    //DISCORD WEBHOOK LOGGER
                     string? webhook = ctx.Configuration.GetRequiredSection("discord_config").GetSection("logs_webhook_url").Get<string>();
                     if (webhook is not null)
                     {
-                        (ulong Id, string Token) webhookData = ParseWebhookUrl(webhook);
-                        logger.WriteTo.Discord(webhookData.Id, webhookData.Token, restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Warning);
+                        Match match = Regex.Match(webhook, "https://discord.com/api/webhooks/(?<Id>\\d*)/(?<Token>.*)");
+                        if (match.Success == false) throw new FormatException("Bad webhook url, please check your config.");
+
+                        ulong id = ulong.Parse(match.Groups["Id"].Value);
+                        string token = match.Groups["Token"].Value;
+
+                        LoggingLevelSwitch discordSwitch = switches.AddSwitch("Discord", new LoggingLevelSwitch(LogEventLevel.Warning));
+                        ILogger discordLogger = new LoggerConfiguration()
+                            .WriteTo.Discord(id, token)
+                            .MinimumLevel.ControlledBy(discordSwitch)
+                            .CreateLogger();
+                        logger.WriteTo.Logger(discordLogger);
                     }
                 })
                 .ConfigureHostConfiguration(config =>
@@ -57,9 +83,10 @@ namespace Un1ver5e.Bot
                     .AddSingleton<Random>()
                     .AddSingleton<LoggingLevelSwitch>()
 
-                    .AddTransient<IRateOptionsProvider, BotContextRateOptionsProvider>()
-
                     .AddSingleton<IDiceService, DefaultDiceService>()
+                    .AddScoped<IRateOptionsProvider, BotContextRateOptionsProvider>()
+                    .AddSingleton<IStashStorage<Snowflake>, DefaultDictionarySnowflakeStashStorage>()
+                    .AddSingleton<ILoggingLevelSwitchCollection, DefaultDictionaryLoggingLevelSwitchCollection>()
 
                     .AddWebhookClientFactory()
 
@@ -86,16 +113,6 @@ namespace Un1ver5e.Bot
                     bot.Intents |= GatewayIntents.DirectMessages | GatewayIntents.DirectReactions;
                 })
                 .Build();
-        }
-
-        private static (ulong id, string token) ParseWebhookUrl(string url)
-        {
-            Match match = Regex.Match(url, "https://discord.com/api/webhooks/(?<Id>\\d*)/(?<Token>.*)");
-
-            ulong id = ulong.Parse(match.Groups["Id"].Value);
-            string token = match.Groups["Token"].Value;
-
-            return (id, token);
         }
     }
 }

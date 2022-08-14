@@ -1,6 +1,7 @@
 ﻿using Disqord;
 using Disqord.Bot.Commands.Application;
 using Disqord.Bot.Commands.Text;
+using Microsoft.Extensions.DependencyInjection;
 using Qmmands;
 using Qmmands.Text;
 using Un1ver5e.Bot.Models;
@@ -51,11 +52,18 @@ namespace Un1ver5e.Bot.Commands
 
     public class StashApplicationCommandModule : DiscordApplicationGuildModuleBase
     {
+        private readonly IStashStorage<Snowflake> _storage;
+
+        public StashApplicationCommandModule(IStashStorage<Snowflake> storage)
+        {
+            _storage = storage;
+        }
+
         [MessageCommand("Запомнить")]
         public IResult RememberThis(IMessage msg)
         {
             IStashData data = new DefaultStashData(msg, Context);
-            IStashData.Stash(Context.AuthorId, data);
+            _storage.Stash(Context.AuthorId, data);
 
             string jumpUrl = Disqord.Discord.MessageJumpLink(Context.GuildId, Context.ChannelId, msg.Id);
 
@@ -67,7 +75,7 @@ namespace Un1ver5e.Bot.Commands
         [Description("Показывает вашу сохраненку (Команда \"Запомнить\")")]
         public IResult RemindMe()
         {
-            IStashData? data = IStashData.GetStashData(Context.AuthorId);
+            IStashData? data = _storage.Get(Context.AuthorId);
 
             if (data is null) return Response(StashCommandsHelper.GetNoStashFoundMessage<LocalInteractionMessageResponse>());
 
@@ -80,15 +88,22 @@ namespace Un1ver5e.Bot.Commands
 
     public class StashTextCommandModule : DiscordTextGuildModuleBase
     {
+        private readonly IStashStorage<Snowflake> _storage;
+
+        public StashTextCommandModule(IStashStorage<Snowflake> storage)
+        {
+            _storage = storage;
+        }
+
         [TextCommand("запомни")]
         public IResult RememberThis()
         {
-            if (Context.Message.ReferencedMessage.HasValue == false) throw new ArgumentException("Эта команда используется только в реплаях.");
+            if (Context.Message.ReferencedMessage.HasValue == false) return Results.Failure("Эта команда используется только в реплаях.");
 
             IMessage msg = Context.Message.ReferencedMessage.Value!;
 
             IStashData data = new DefaultStashData(msg, Context);
-            IStashData.Stash(Context.AuthorId, data);
+            _storage.Stash(Context.AuthorId, data);
 
             string jumpUrl = Disqord.Discord.MessageJumpLink(Context.GuildId, Context.ChannelId, msg.Id);
 
