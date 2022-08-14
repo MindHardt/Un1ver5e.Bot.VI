@@ -2,7 +2,7 @@
 {
     public interface IDice
     {
-        public IEnumerable<int> GetResults(Random random);
-        public IThrowResult Throw(Random random, int modifyer = 0);
+        public IEnumerable<int> GetResults();
+        public IThrowResult Throw(int modifyer = 0);
     }
 }

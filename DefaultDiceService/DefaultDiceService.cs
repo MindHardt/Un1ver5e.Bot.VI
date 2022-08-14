@@ -69,7 +69,7 @@ namespace Un1ver5e.Bot.Services.Dice
 
             TryCacheDice(dice);
 
-            return dice.Throw(Randomizer, modifyer);
+            return dice.Throw(modifyer);
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace Un1ver5e.Bot.Services.Dice
         /// <param name="text"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
-        private static IDice ParseText(string text)
+        private IDice ParseText(string text)
         {
             string[] numbers = text.ToLower().Split('d');
 
@@ -107,7 +107,7 @@ namespace Un1ver5e.Bot.Services.Dice
 
             if (countCorrect == false || maxValueCorrect == false) throw new ArgumentException("Некорректный текст дайса", nameof(text));
 
-            return new DefaultDice(maxValue, count);
+            return new DefaultDice(Randomizer, maxValue, count);
         }
 
         //THE UNDERLYING PART IS RESPONSIBLE FOR DICE CACHE
@@ -136,5 +136,11 @@ namespace Un1ver5e.Bot.Services.Dice
         /// </summary>
         /// <returns></returns>
         public IReadOnlyDictionary<string, IDice> GetCacheSnapshot() => Cache;
+
+        public IDice? CreateDice(string text)
+        {
+            if (Regex.IsMatch(text, "\\d*[Dd]\\d+") == false) return null;
+            return ParseText(text);
+        }
     }
 }
