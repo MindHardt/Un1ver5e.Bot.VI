@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using Disqord;
+using System.Text;
 
 namespace Un1ver5e.Bot
 {
@@ -54,7 +55,7 @@ namespace Un1ver5e.Bot
         /// <returns></returns>
         public static IList<string> ChunkAtPages(this IEnumerable<string> collection, int maxPageLen)
         {
-            Queue<string> strings = new Queue<string>(collection);
+            Queue<string> strings = new(collection);
 
             List<string> processed = new();
 
@@ -74,5 +75,18 @@ namespace Un1ver5e.Bot
 
             return processed;
         }
+
+        /// <summary>
+        /// Gets a <see cref="LocalEmbed"/> object which displays data about <paramref name="message"/>.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="guildId">The guild id of the <paramref name="message"/>. Don't leave it null if message was inside a guild or the embed url will be broken.</param>
+        /// <returns></returns>
+        public static LocalEmbed GetDisplay(this IMessage message, Snowflake? guildId = null)
+            => new LocalEmbed()
+                .WithDescription(message.Content)
+                .WithTimestamp(message.CreatedAt())
+                .WithAuthor(message.Author)
+                .WithFooter($"[Оригинальное сообщение]({Disqord.Discord.MessageJumpLink(guildId, message.ChannelId, message.Id)})");
     }
 }
