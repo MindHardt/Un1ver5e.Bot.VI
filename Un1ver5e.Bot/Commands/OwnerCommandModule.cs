@@ -71,7 +71,7 @@ namespace Un1ver5e.Bot.Commands
             return Response(new LocalInteractionMessageResponse().WithContent(level.ToString()).WithIsEphemeral());
         }
         [AutoComplete("o-verbosity")]
-        public void LogLevelSwitchAutoComplete([Name("Уровень")] AutoComplete<string> level)
+        public void LogLevelSwitchAutoComplete([Name("Логгер")] AutoComplete<string> level)
         {
             if (level.IsFocused)
             {
