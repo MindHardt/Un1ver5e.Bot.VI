@@ -56,7 +56,7 @@ namespace Un1ver5e.Bot.Commands
             _storage = storage;
         }
 
-        [TextCommand("запомни")]
+        [TextCommand("цитата")]
         public IResult RememberThis()
         {
             IMessage? msg = Context.Message.ReferencedMessage.GetValueOrDefault();
@@ -68,7 +68,7 @@ namespace Un1ver5e.Bot.Commands
 
             var response = new LocalMessage()
                 .AddEmbed(msg.GetDisplay(Context.GuildId))
-                .AddComponent(DeleteThisButtonComponentCommand.GetDeleteButtonRow());
+                .AddComponent(DeleteThisButtonExtensions.GetDeleteButtonRow());
 
             return Response(response);
         }
