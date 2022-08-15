@@ -59,7 +59,7 @@ namespace Un1ver5e.Bot.Commands.Tags
             };
 
             //Checking if tag with this name already exists in a database
-            Tag? existentTag = _dbctx.Tags.FirstOrDefault(t => t.Name == tagName);
+            Tag? existentTag = _dbctx.Tags.FirstOrDefault(t => t.Name == tagName); //TODO: Tag delete && tag rewrite confirmation
             if (existentTag is null || existentTag.CanBeEditedBy(await Bot.IsOwnerAsync(Context.AuthorId), Context.AuthorId))
             {
                 if (existentTag is not null) _dbctx.Tags.Remove(existentTag);
