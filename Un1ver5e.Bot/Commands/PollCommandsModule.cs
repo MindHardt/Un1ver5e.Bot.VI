@@ -7,7 +7,7 @@ namespace Un1ver5e.Bot.Commands
 {
     public class PollCommandsModule : DiscordApplicationGuildModuleBase
     {
-        [SlashCommand("poll")]
+        [SlashCommand("опрос")]
         [Description("Голосовалки")]
         public IResult StartPollCommand(
             [Name("Название"), Description("Текст сверху опроса")] string header,
@@ -16,7 +16,7 @@ namespace Un1ver5e.Bot.Commands
             [Name("Время"), Description("Время через которое завершится опрос. Не более суток")] string timeStamp,
             [Name("Варианты"), Description("Опции через запятую")] string options)
         {
-            if (TimeSpan.TryParse(timeStamp, out TimeSpan time) == false && time > TimeSpan.FromHours(24)) throw new ArgumentOutOfRangeException(nameof(timeStamp));
+            if (TimeSpan.TryParse(timeStamp, out TimeSpan time) == false && time > TimeSpan.FromHours(24)) return Results.Failure("Неверный формат времени!");
 
             bool isAnon = anonimous == "true";
             return Menu(new DefaultInteractionMenu(new PollView(header, isAnon, time, options.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)), Context.Interaction)

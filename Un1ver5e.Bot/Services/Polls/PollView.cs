@@ -1,12 +1,13 @@
 ﻿using Disqord;
 using Disqord.Extensions.Interactivity.Menus;
+using System.Collections.Concurrent;
 using System.Text;
 
 namespace Un1ver5e.Bot.Services.Polls
 {
     public class PollView : ViewBase
     {
-        private readonly Dictionary<string, IList<IMember>> _options = new();
+        private readonly ConcurrentDictionary<string, IList<IMember>> _options = new();
         private readonly bool _isAnonymous;
         private readonly string _pollTimerDisplay;
         private readonly string _header;
