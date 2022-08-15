@@ -72,7 +72,7 @@ namespace Un1ver5e.Bot.Models
         public DateTime CreatedAt { get; set; }
 
         /// <summary>
-        /// Creates a message type for 
+        /// Formats this <see cref="Tag"/> as a <typeparamref name="TMessage"/> and returns a new object of this type.
         /// </summary>
         /// <typeparam name="TMessage"></typeparam>
         /// <returns></returns>
@@ -89,34 +89,12 @@ namespace Un1ver5e.Bot.Models
             }));
 
         /// <summary>
-        /// Gets a <see cref="LocalEmbed"/> which represents common data of this <see cref="Tag"/>
+        /// Defines whether this <see cref="Tag"/> can be edited by the specified user.
         /// </summary>
-        /// <param name="bot"></param>
+        /// <param name="isOwner">External check for bot's owner</param>
+        /// <param name="authorId"></param>
         /// <returns></returns>
-        public async ValueTask<LocalEmbed> GetDisplayAsync(DiscordBotBase bot)
-        {
-            IUser author = (bot.GetUser(AuthorId) as IUser ?? await bot.FetchUserAsync(AuthorId))!;
-
-            return new LocalEmbed()
-            {
-                Author = new LocalEmbedAuthor()
-                {
-                    IconUrl = author.GetAvatarUrl(),
-                    Name = author.Name
-                },
-                Description = Content,
-                Title = $"> Тег `{Name}`",
-                Timestamp = new DateTimeOffset(CreatedAt),
-                Fields = new LocalEmbedField[]
-                {
-                    new LocalEmbedField()
-                    {
-                        Name = "Публичный",
-                        Value = IsPublic ? "🌝 Да" : "🌚 Нет"
-                    }
-                }
-            };
-        }
+        public bool CanBeEditedBy(bool isOwner, ulong authorId) => isOwner || AuthorId == authorId;
 
         /// <summary>
         /// Creates a tag with specified data whos <see cref="Name"/> is randomized via <see cref="Guid.NewGuid()"/>
