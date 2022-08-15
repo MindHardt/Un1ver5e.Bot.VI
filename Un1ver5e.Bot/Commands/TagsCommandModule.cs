@@ -60,42 +60,16 @@ namespace Un1ver5e.Bot.Commands.Tags
 
             //Checking if tag with this name already exists in a database
             Tag? existentTag = _dbctx.Tags.FirstOrDefault(t => t.Name == tagName);
-            if (existentTag is not null) 
+            if (existentTag is null || existentTag.CanBeEditedBy(await Bot.IsOwnerAsync(Context.AuthorId), Context.AuthorId))
             {
-                if (existentTag.CanBeEditedBy(await Bot.IsOwnerAsync(Context.AuthorId), Context.AuthorId))
-                {
-                    string modalId = Guid.NewGuid().ToString();
-                    var confirmationModal = new LocalInteractionModalResponse()
-                        .WithCustomId(modalId)
-                        .WithTitle("Чтобы перезаписать тег введите его название.")
-                        .WithComponents(
-                            LocalComponent.Row(
-                                LocalComponent.TextInput("inputName", "Название тега", TextInputComponentStyle.Short)
-                                .WithPlaceholder(tagName)));
-
-                    await Context.Interaction.Response().SendModalAsync(confirmationModal);
-
-                    var e = await Context.WaitForInteractionAsync<IModalSubmitInteraction>(m => m.CustomId == modalId);
-                    if (e is null || e.Components[0] is not ITextInputComponent field || field.Value != tagName) return Results.Failure("Вы не ответили на модал!");
-
-                    _dbctx.Tags.Update(tag);
-                    await _dbctx.SaveChangesAsync();
-                    await e.Response().SendMessageAsync(
-                        new LocalInteractionMessageResponse()
-                        .AddEmbed(
-                            new LocalEmbed().WithDescription($"Успешно сохранил тег `{tagName}`")));
-
-                    return Results.Success;
-                }
-                else return Results.Failure("Тег с таким названием уже существует и у вас нет прав на его перезапись!");
-            }
-            else
-            {
-                await _dbctx.Tags.AddAsync(tag);
+                if (existentTag is not null) _dbctx.Tags.Remove(existentTag);
+                _dbctx.Tags.Add(tag);
                 await _dbctx.SaveChangesAsync();
 
-                return Response(new LocalEmbed().WithDescription($"Успешно сохранил тег `{tagName}`"));
+                string action = existentTag is null ? "сохранил" : "перезаписал";
+                return Response(new LocalEmbed().WithDescription($"Успешно {action} тег `{tagName}`"));
             }
+            else return Results.Failure("Тег с таким названием уже существует и у вас нет прав на его перезапись!");
         }
 
         [SlashCommand("тег"), Description("Отправляет тег.")]
