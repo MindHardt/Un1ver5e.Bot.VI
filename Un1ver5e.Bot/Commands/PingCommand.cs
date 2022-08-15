@@ -2,6 +2,7 @@
 using Disqord.Bot.Commands.Application;
 using Qmmands;
 using System.Diagnostics;
+using Un1ver5e.Bot.Commands.DeleteThisButton;
 
 namespace Un1ver5e.Bot.Commands
 {

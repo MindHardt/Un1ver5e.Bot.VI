@@ -4,6 +4,7 @@ using Disqord.Bot.Commands.Text;
 using Qmmands;
 using Qmmands.Text;
 using Qommon;
+using Un1ver5e.Bot.Commands.DeleteThisButton;
 using Un1ver5e.Bot.Models;
 
 namespace Un1ver5e.Bot.Commands
@@ -23,9 +24,11 @@ namespace Un1ver5e.Bot.Commands
             IStashData data = new DefaultStashData(msg, Context);
             _storage.Stash(Context.AuthorId, data);
 
-            return Response(new LocalInteractionMessageResponse()
+            var response = new LocalInteractionMessageResponse()
                 .AddEmbed(msg.GetDisplay(Context.GuildId))
-                .AddComponent(DeleteThisButtonComponentCommand.GetDeleteButtonRow()));
+                .AddDeleteThisButton();
+
+            return Response(response);
         }
 
         [SlashCommand("вспомни")]
@@ -36,7 +39,11 @@ namespace Un1ver5e.Bot.Commands
 
             if (data is null) return Results.Failure("Сохраненка не найдена");
 
-            return Response(data.Message.GetDisplay(Context.GuildId));
+            var response = new LocalInteractionMessageResponse()
+                .AddEmbed(data.Message.GetDisplay(data.Context.GuildId))
+                .AddDeleteThisButton(Context.AuthorId);
+
+            return Response(response);
         }
     }
 
@@ -59,9 +66,11 @@ namespace Un1ver5e.Bot.Commands
             IStashData data = new DefaultStashData(msg, Context);
             _storage.Stash(Context.AuthorId, data);
 
-            return Response(new LocalMessage()
+            var response = new LocalMessage()
                 .AddEmbed(msg.GetDisplay(Context.GuildId))
-                .AddComponent(DeleteThisButtonComponentCommand.GetDeleteButtonRow()));
+                .AddComponent(DeleteThisButtonComponentCommand.GetDeleteButtonRow());
+
+            return Response(response);
         }
     }
 }

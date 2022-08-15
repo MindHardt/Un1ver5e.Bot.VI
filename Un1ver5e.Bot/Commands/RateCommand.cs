@@ -2,6 +2,7 @@
 using Disqord.Bot.Commands.Application;
 using Microsoft.Extensions.DependencyInjection;
 using Qmmands;
+using Un1ver5e.Bot.Commands.DeleteThisButton;
 using Un1ver5e.Bot.Models;
 
 namespace Un1ver5e.Bot.Commands
