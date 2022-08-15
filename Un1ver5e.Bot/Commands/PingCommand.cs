@@ -25,7 +25,7 @@ namespace Un1ver5e.Bot.Commands
                     .AddField(new LocalEmbedField()
                         .WithName("Бот запущен")
                         .WithValue(launchTimeStamp)))
-                .AddComponent(LocalComponent.Row(DeleteThisButtonComponentCommand.GetDeleteButton()));
+                .AddComponent(LocalComponent.Row(DeleteThisButtonExtensions.GetDeleteButton()));
 
             return Response(response);
         }

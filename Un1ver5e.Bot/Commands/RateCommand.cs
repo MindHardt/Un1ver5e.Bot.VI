@@ -28,7 +28,7 @@ namespace Un1ver5e.Bot.Commands
                 .AddEmbed(new LocalEmbed()
                     .WithTitle(rateoption)
                     .WithDescription(msgLink))
-                .AddComponent(DeleteThisButtonComponentCommand.GetDeleteButtonRow());
+                .AddComponent(DeleteThisButtonExtensions.GetDeleteButtonRow());
 
             return Response(response);
         }
