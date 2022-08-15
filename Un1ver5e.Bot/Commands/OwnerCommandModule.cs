@@ -46,7 +46,6 @@ namespace Un1ver5e.Bot.Commands
             return Response(embed);
         }
 
-
         [SlashCommand("o-shutdown")]
         [Description("(Только для администраторов)")]
         public async ValueTask ShutDownCommand()
@@ -80,8 +79,6 @@ namespace Un1ver5e.Bot.Commands
             }
         }
 
-
-
         [SlashCommand("o-sqlscript")]
         [Description("(Только для администраторов)")]
         public IResult SqlScriptCommand()
@@ -108,7 +105,6 @@ namespace Un1ver5e.Bot.Commands
 
             return Response(resp);
         }
-
 
         [SlashCommand("o-listlogs")]
         [Description("(Только для администраторов)")]
