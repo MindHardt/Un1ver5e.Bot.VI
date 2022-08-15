@@ -87,6 +87,6 @@ namespace Un1ver5e.Bot
                 .WithDescription(message.Content)
                 .WithTimestamp(message.CreatedAt())
                 .WithAuthor(message.Author)
-                .WithFooter($"[Оригинальное сообщение]({Disqord.Discord.MessageJumpLink(guildId, message.ChannelId, message.Id)})");
+                .AddField("Ссылка на сообщение", $"[Тык]({Disqord.Discord.MessageJumpLink(guildId, message.ChannelId, message.Id)})");
     }
 }
