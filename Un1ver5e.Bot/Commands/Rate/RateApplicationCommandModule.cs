@@ -7,7 +7,7 @@ using Un1ver5e.Bot.Models;
 
 namespace Un1ver5e.Bot.Commands
 {
-    public class RateCommand : DiscordApplicationGuildModuleBase
+    public class RateApplicationCommandModule : DiscordApplicationGuildModuleBase
     {
         //RATE
         [MessageCommand("Оценить")]
