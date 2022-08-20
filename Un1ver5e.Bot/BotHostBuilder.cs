@@ -32,7 +32,11 @@ namespace Un1ver5e.Bot
                 })
                 .UseSerilog((ctx, services, logger) =>
                 {
-                    //Here I get a logging level switch collection object which stores switches, allowing to change verbosity of different sinks during runtime
+                    //Exclude 
+                    logger.Filter.ByExcluding(e => e.Exception is Disqord.WebSocket.WebSocketClosedException);
+                    logger.Filter.ByExcluding(e => e.Exception is NullReferenceException);
+
+                    //A logging level switch collection object which stores switches, allowing to change verbosity of different sinks during runtime
                     ILoggingLevelSwitchCollection switches = services.GetRequiredService<ILoggingLevelSwitchCollection>();
 
                     //CONSOLE LOGGER
@@ -83,7 +87,7 @@ namespace Un1ver5e.Bot
                     .AddSingleton<LoggingLevelSwitch>()
 
                     .AddSingleton<IDiceService, DefaultDiceService>()
-                    .AddScoped<IRateOptionsProvider, BotContextRateOptionsProvider>()
+                    .AddTransient<IRateOptionsProvider, BotContextRateOptionsProvider>()
                     .AddSingleton<IStashStorage<Snowflake>, DefaultDictionarySnowflakeStashStorage>()
                     .AddSingleton<ILoggingLevelSwitchCollection, DefaultDictionaryLoggingLevelSwitchCollection>()
 
@@ -104,12 +108,11 @@ namespace Un1ver5e.Bot
                 {
                     IConfigurationSection config = context.Configuration.GetRequiredSection("discord_config");
 
-                    string? token = config["token"]; ;
+                    string token = config["token"] ?? throw new KeyNotFoundException("Bot token not found, please check your config."); ;
                     string[] prefixes = config.GetSection("prefixes").Get<string[]>() ?? Array.Empty<string>();
 
                     bot.Token = token;
                     bot.Prefixes = prefixes;
-                    bot.Intents |= GatewayIntents.DirectMessages | GatewayIntents.DirectReactions;
                 })
                 .Build();
         }
