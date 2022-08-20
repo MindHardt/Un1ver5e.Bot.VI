@@ -32,9 +32,9 @@ namespace Un1ver5e.Bot
                 })
                 .UseSerilog((ctx, services, logger) =>
                 {
-                    //Exclude 
+                    //Exclude annoying Disqord exception messages (they are harmless 99% of the time)
                     logger.Filter.ByExcluding(e => e.Exception is Disqord.WebSocket.WebSocketClosedException);
-                    logger.Filter.ByExcluding(e => e.Exception is NullReferenceException);
+
 
                     //A logging level switch collection object which stores switches, allowing to change verbosity of different sinks during runtime
                     ILoggingLevelSwitchCollection switches = services.GetRequiredService<ILoggingLevelSwitchCollection>();
