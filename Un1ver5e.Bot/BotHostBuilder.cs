@@ -1,7 +1,5 @@
 ﻿using Disqord;
-using Disqord.Bot;
 using Disqord.Bot.Hosting;
-using Disqord.Gateway;
 using Disqord.Webhook;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -16,6 +14,7 @@ using System.Text.RegularExpressions;
 using Un1ver5e.Bot.Models;
 using Un1ver5e.Bot.Services.Database;
 using Un1ver5e.Bot.Services.Dice;
+using Un1ver5e.Bot.Services.Graphics;
 
 namespace Un1ver5e.Bot
 {
@@ -85,6 +84,8 @@ namespace Un1ver5e.Bot
                     services
                     .AddSingleton<Random>()
                     .AddSingleton<LoggingLevelSwitch>()
+
+                    .AddSingleton<IMonoColorImageGenerator, DefaultImageSharpGraphicsService>()
 
                     .AddSingleton<IDiceService, DefaultDiceService>()
                     .AddTransient<IRateOptionsProvider, BotContextRateOptionsProvider>()
