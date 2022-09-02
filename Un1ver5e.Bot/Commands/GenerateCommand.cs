@@ -13,6 +13,7 @@ namespace Un1ver5e.Bot.Commands
             [Choice("котик",     "https://thiscatdoesnotexist.com/")]
             [Choice("лошадь",    "https://thishorsedoesnotexist.com/")]
             [Choice("картина",   "https://thisartworkdoesnotexist.com/")]
+            [Choice("человек",   "https://thispersondoesnotexist.com/image")]
             string url)
         {
             await Deferral(isEphemeral: false);
