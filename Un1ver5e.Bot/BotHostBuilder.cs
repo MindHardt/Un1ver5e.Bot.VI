@@ -110,10 +110,9 @@ namespace Un1ver5e.Bot
                     IConfigurationSection config = context.Configuration.GetRequiredSection("discord_config");
 
                     string token = config["token"] ?? throw new KeyNotFoundException("Bot token not found, please check your config."); ;
-                    string[] prefixes = config.GetSection("prefixes").Get<string[]>() ?? Array.Empty<string>();
 
                     bot.Token = token;
-                    bot.Prefixes = prefixes;
+                    bot.UseMentionPrefix = false;
                 })
                 .Build();
         }
