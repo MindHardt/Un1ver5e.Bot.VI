@@ -39,7 +39,7 @@ namespace Un1ver5e.Bot.Commands
                 }
                 catch (Exception)
                 {
-                    Logger.LogWarning("An exception occured while broadcasting to webhook {webhook}", $"...{webhook.Url[^16]}");
+                    Logger.LogWarning("An exception occured while broadcasting to webhook {webhook}", $"...{webhook.Url[^32]}");
                 }
             }
 
@@ -50,7 +50,7 @@ namespace Un1ver5e.Bot.Commands
             return Response(resp);
         }
 
-        //ADDWEBHOOK
+        //ADD WEBHOOK
         [SlashCommand("добавить-вебхук")]
         [Description("Добавляет боту вебхук. Не используй если не понимаешь зачем.")]
         [RequireAuthorPermissions(Permissions.ManageWebhooks)]
@@ -64,7 +64,7 @@ namespace Un1ver5e.Bot.Commands
                     .WithAuthor(Bot.CurrentUser!)
                     .WithTitle("Получил этот вебхук! 💾"));
 
-            await _dbctx.Webhooks.AddAsync(new Webhook() { Url = webhookurl });
+            _dbctx.Webhooks.Add(new Webhook() { Url = webhookurl });
             await _dbctx.SaveChangesAsync();
 
             IWebhookClient client = _factory.CreateClient(webhookurl);

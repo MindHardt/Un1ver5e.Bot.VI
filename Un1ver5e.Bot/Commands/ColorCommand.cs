@@ -36,16 +36,5 @@ namespace Un1ver5e.Bot.Commands
 
             return Response(response);
         }
-
-
-        [AutoComplete("цвет")]
-        public void ColorAutocomplete(
-            [Name("Цвет")] AutoComplete<string> colorHex)
-        {
-            if (colorHex.IsFocused && Regex.IsMatch(colorHex.RawArgument, "[0-9a-fA-F]{6}"))
-            {
-                colorHex.Choices.Add(colorHex.RawArgument);
-            }
-        }
     }
 }
