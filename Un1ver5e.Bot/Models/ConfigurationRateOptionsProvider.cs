@@ -8,8 +8,8 @@ namespace Un1ver5e.Bot.Models
         private readonly string[] _rateOpts;
         public ConfigurationRateOptionsProvider(IConfiguration config)
         {
-            _rateOpts = config.GetSection("rate_options").Get<string[]>() ?? new[] { "No splash here" };
+            _rateOpts = config.GetSection("rate_options").Get<string[]>() ?? throw new KeyNotFoundException("Could not find rate_options in config.");
         }
-        public string GetOptionAsync(Random random) => _rateOpts.GetRandomElement(random);
+        public ValueTask<string> GetOptionAsync(Random random) => ValueTask.FromResult(_rateOpts.GetRandomElement(random));
     }
 }
