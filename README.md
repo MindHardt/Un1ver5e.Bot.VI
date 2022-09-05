@@ -13,8 +13,6 @@
 {
   "discord_config": {
     "token": "YOUR TOKEN HERE",
-    "prefixes": [ "mo" ],
-    "owners": [ 298097988495081472 ],
     "logs_webhook_url": "YOUR WEBHOOK HERE (optional)"
   },
   "dice_service": {
