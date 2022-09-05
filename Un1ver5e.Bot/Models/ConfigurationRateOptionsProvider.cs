@@ -10,6 +10,6 @@ namespace Un1ver5e.Bot.Models
         {
             _rateOpts = config.GetSection("rate_options").Get<string[]>() ?? new[] { "No splash here" };
         }
-        public string GetOption(Random random) => _rateOpts.GetRandomElement(random);
+        public string GetOptionAsync(Random random) => _rateOpts.GetRandomElement(random);
     }
 }

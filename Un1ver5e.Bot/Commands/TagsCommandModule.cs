@@ -2,6 +2,7 @@
 using Disqord.Bot.Commands.Application;
 using Disqord.Extensions.Interactivity;
 using Disqord.Rest;
+using Microsoft.EntityFrameworkCore;
 using Qmmands;
 using System.Text.RegularExpressions;
 using Un1ver5e.Bot.Models;
@@ -63,7 +64,7 @@ namespace Un1ver5e.Bot.Commands.Tags
             if (existentTag is null || existentTag.CanBeEditedBy(await Bot.IsOwnerAsync(Context.AuthorId), Context.AuthorId))
             {
                 if (existentTag is not null) _dbctx.Tags.Remove(existentTag);
-                _dbctx.Tags.Add(tag);
+                await _dbctx.Tags.AddAsync(tag);
                 await _dbctx.SaveChangesAsync();
 
                 string action = existentTag is null ? "сохранил" : "перезаписал";
@@ -73,11 +74,11 @@ namespace Un1ver5e.Bot.Commands.Tags
         }
 
         [SlashCommand("тег"), Description("Отправляет тег.")]
-        public IResult SendTagCommand(
+        public async ValueTask<IResult> SendTagCommandAsync(
             [Name("Название-тега"), Description("Название тега. Подождите немного для предоставления вариантов.")] 
             string tagName)
         {
-            Tag? tag = _dbctx.Tags.FirstOrDefault(tag => tag.Name == tagName);
+            Tag? tag = await _dbctx.Tags.FirstOrDefaultAsync(tag => tag.Name == tagName);
             if (tag is null) return Results.Failure($"Тег {tagName} не найден!");
 
             var response = tag.CreateMessage<LocalInteractionMessageResponse>();
@@ -86,16 +87,19 @@ namespace Un1ver5e.Bot.Commands.Tags
         }
 
         [AutoComplete("тег")]
-        public void SendTagAutocomplete(
+        public async ValueTask SendTagAutocompleteAsync(
             [Name("Название-тега")] AutoComplete<string> tagName)
         {
             if (tagName.IsFocused)
             {
-                var matches = _dbctx.Tags
+                var matches = await _dbctx.Tags
                     .ThatAreSeenIn(Context.GuildId)
+                    .AsQueryable()
+                    .OrderBy(tag => EF.Functions.Random())
                     .Select(tag => tag.Name)
                     .Where(name => Regex.IsMatch(name, tagName.RawArgument!))
-                    .Take(Disqord.Discord.Limits.ApplicationCommand.MaxOptionAmount);
+                    .Take(Disqord.Discord.Limits.ApplicationCommand.Option.MaxChoiceAmount)
+                    .ToArrayAsync();
 
                 tagName.Choices.AddRange(matches);
             }

@@ -33,7 +33,7 @@ namespace Un1ver5e.Bot.Commands
                 Id = user.Id
             };
 
-            context.Admins.Add(newAdmin);
+            await context.Admins.AddAsync(newAdmin);
             await context.SaveChangesAsync();
 
             LocalEmbed embed = new()
@@ -87,7 +87,7 @@ namespace Un1ver5e.Bot.Commands
 
             using (IServiceScope scope = Bot.Services.CreateScope())
             {
-                script = scope.ServiceProvider.GetService<BotContext>()!.GetCreateScript();
+                script = scope.ServiceProvider.GetRequiredService<BotContext>().GetCreateScript();
             }
 
             byte[] asBytes = Encoding.UTF8.GetBytes(script);

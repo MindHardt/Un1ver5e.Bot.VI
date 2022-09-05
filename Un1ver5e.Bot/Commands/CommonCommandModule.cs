@@ -181,7 +181,7 @@ namespace Un1ver5e.Bot.Commands
             //Just ensuring
 
             int randomSeed = (int)message.Id.RawValue;
-            string rateoption = Bot.Services.GetRequiredService<IRateOptionsProvider>().GetOption(new Random(randomSeed));
+            string rateoption = await Bot.Services.GetRequiredService<IRateOptionsProvider>().GetOptionAsync(new Random(randomSeed));
             //Each call on the same message will result the same
 
 

@@ -2,6 +2,6 @@
 {
     public interface IRateOptionsProvider
     {
-        public string GetOption(Random random);
+        public ValueTask<string> GetOptionAsync(Random random);
     }
 }

@@ -64,7 +64,7 @@ namespace Un1ver5e.Bot.Commands
                     .WithAuthor(Bot.CurrentUser!)
                     .WithTitle("Получил этот вебхук! 💾"));
 
-            _dbctx.Webhooks.Add(new Webhook() { Url = webhookurl });
+            await _dbctx.Webhooks.AddAsync(new Webhook() { Url = webhookurl });
             await _dbctx.SaveChangesAsync();
 
             IWebhookClient client = _factory.CreateClient(webhookurl);

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Un1ver5e.Bot.Services.Database;
 
 namespace Un1ver5e.Bot.Models
@@ -12,18 +13,19 @@ namespace Un1ver5e.Bot.Models
             this.provider = provider;
         }
 
-        public string GetOption(Random random)
+        public async ValueTask<string> GetOptionAsync(Random random)
         {
             using var scope = provider.CreateScope();
             var ctx = scope.ServiceProvider.GetRequiredService<BotContext>();
 
-            int optionsCount = ctx.RateOptions.Count();
+            int optionsCount = await ctx.RateOptions.CountAsync();
             int index = random.Next(optionsCount);
 
-            string option = ctx.RateOptions
+            string option = await ctx.RateOptions
+                .OrderBy(ro => ro.Id)
                 .Skip(index)
                 .Select(ro => ro.Text)
-                .First();
+                .FirstAsync();
 
             return option;
         }
