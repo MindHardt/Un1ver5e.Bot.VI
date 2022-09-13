@@ -22,7 +22,7 @@ namespace Un1ver5e.Bot.Commands
         public async ValueTask<IResult> InfoMember(IMember member)
         {
             int tagLimit = (await _dbctx.Users.FirstOrDefaultAsync(u => u.Id == Context.AuthorId.RawValue) ?? new UserData()).TagsCountLimit;
-            int tagCount = await _dbctx.Tags.Where(t => t.AuthorId == Context.AuthorId.RawValue).CountAsync();
+            int tagCount = await _dbctx.Tags.Where(t => t.AuthorId == member.Id.RawValue).CountAsync();
 
             int roleLimit = Disqord.Discord.Limits.Message.Embed.Field.MaxValueLength / 23; //23 for role mention length + line separator
             var embed = new LocalEmbed()

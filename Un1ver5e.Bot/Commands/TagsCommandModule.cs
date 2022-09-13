@@ -37,7 +37,7 @@ namespace Un1ver5e.Bot.Commands.Tags
             int tagLimit = (await _dbctx.Users.FirstOrDefaultAsync(u => u.Id == Context.AuthorId.RawValue) ?? new UserData()).TagsCountLimit;
             int tagCount = await _dbctx.Tags.Where(t => t.AuthorId == Context.AuthorId.RawValue).CountAsync();
 
-            if (tagCount >= tagLimit) return Results.Failure("Превышено максимальное количество тегов!");
+            if (tagCount >= tagLimit) return Results.Failure("Превышено максимальное количество тегов! Если считаете это несправедливым, свяжитесь с владельцами бота.");
 
             //Getting stashed message
             IStashData? data = _storage.Get(Context.AuthorId);

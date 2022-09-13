@@ -3,6 +3,7 @@ using Disqord.Bot.Commands;
 using Disqord.Bot.Commands.Application;
 using Disqord.Extensions.Interactivity.Menus.Paged;
 using Disqord.Rest;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -26,7 +27,7 @@ namespace Un1ver5e.Bot.Commands
             await Deferral(false);
 
             using IServiceScope scope = Bot.Services.CreateScope();
-            BotContext context = scope.ServiceProvider.GetService<BotContext>()!;
+            BotContext context = scope.ServiceProvider.GetRequiredService<BotContext>();
 
             Admin newAdmin = new()
             {
@@ -131,6 +132,27 @@ namespace Un1ver5e.Bot.Commands
                 .WithIsEphemeral(true);
 
             return Response(response);
+        }
+
+        [SlashCommand("o-setlimit")]
+        [Description("(Только для администраторов)")]
+        public async ValueTask<IResult> SetLimitCommandAsync(
+            [Name("юзер")] IMember member,
+            [Name("лимит-тегов")] int limit)
+        {
+            using IServiceScope scope = Bot.Services.CreateScope();
+            BotContext ctx = scope.ServiceProvider.GetRequiredService<BotContext>();
+
+            var data = await ctx.Users.FirstOrDefaultAsync(u => u.Id == member.Id.RawValue) ?? new UserData() { Id = member.Id.RawValue };
+
+            int prevLimit = data.TagsCountLimit;
+            data.TagsCountLimit = limit;
+
+            ctx.Users.Attach(data);
+            ctx.Users.Update(data);
+            await ctx.SaveChangesAsync();
+
+            return Response($"Успешно изменил лимит тегов для {member.Nick ?? member.Name}. `{prevLimit}` -> `{limit}`");
         }
     }
 }

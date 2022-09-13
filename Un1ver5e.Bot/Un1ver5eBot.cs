@@ -20,7 +20,6 @@ namespace Un1ver5e.Bot
 
             return new LocalMessage();
         }
-
         protected override string? FormatFailureReason(IDiscordCommandContext context, IResult result) => result switch
         {
             CommandNotFoundResult
@@ -73,7 +72,6 @@ namespace Un1ver5e.Bot
 
                 return base.OnInitialize(cancellationToken);
             }
-
         }
     }
 }

@@ -112,7 +112,6 @@ namespace Un1ver5e.Bot
                     string token = config["token"] ?? throw new KeyNotFoundException("Bot token not found, please check your config."); ;
 
                     bot.Token = token;
-                    bot.UseMentionPrefix = false;
                 })
                 .Build();
         }
