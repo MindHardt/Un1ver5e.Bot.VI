@@ -10,15 +10,16 @@ namespace Un1ver5e.Bot.Services.Database
         public DbSet<Admin> Admins { get; set; } = null!;
         public DbSet<Webhook> Webhooks { get; set; } = null!;
         public DbSet<Tag> Tags { get; set; } = null!;
+        public DbSet<UserData> Users { get; set; } = null!;
 
         /// <summary>
         /// Gets random <see cref="Splash"/> from <see cref="Splashes"/>.
         /// </summary>
         /// <returns></returns>
-        public string GetSplash() => Splashes
-            .OrderBy(s => Guid.NewGuid())
+        public async ValueTask<string> GetSplashAsync() => await Splashes
+            .OrderBy(s => EF.Functions.Random())
             .Select(s => s.Text)
-            .First();
+            .FirstAsync();
 
         public BotContext(DbContextOptions<BotContext> options)
             : base(options)

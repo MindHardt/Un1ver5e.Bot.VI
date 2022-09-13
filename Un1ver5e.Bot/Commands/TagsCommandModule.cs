@@ -34,9 +34,10 @@ namespace Un1ver5e.Bot.Commands.Tags
             await Deferral(false); //This might take a while
 
             //Checking tag limit
-#pragma warning disable CS0162
-            if (false) return Results.Failure("Превышено максимальное количество тегов!"); //TODO: Add tag limit
-#pragma warning restore CS0162
+            int tagLimit = (await _dbctx.Users.FirstOrDefaultAsync(u => u.Id == Context.AuthorId.RawValue) ?? new UserData()).TagsCountLimit;
+            int tagCount = await _dbctx.Tags.Where(t => t.AuthorId == Context.AuthorId.RawValue).CountAsync();
+
+            if (tagCount >= tagLimit) return Results.Failure("Превышено максимальное количество тегов!");
 
             //Getting stashed message
             IStashData? data = _storage.Get(Context.AuthorId);

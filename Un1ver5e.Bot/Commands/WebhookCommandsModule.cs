@@ -4,6 +4,7 @@ using Disqord.Bot.Commands.Application;
 using Disqord.Webhook;
 using Microsoft.Extensions.Logging;
 using Qmmands;
+using Qommon;
 using Un1ver5e.Bot.Models;
 using Un1ver5e.Bot.Services.Database;
 
@@ -27,7 +28,11 @@ namespace Un1ver5e.Bot.Commands
         {
             await Deferral(true);
 
-            LocalWebhookMessage msg = new LocalWebhookMessage().WithContent(message.Content);
+            LocalWebhookMessage msg = new LocalWebhookMessage()
+            {
+                AuthorName = Optional.FromNullable(Context.Bot.CurrentUser?.Name),
+                AuthorAvatarUrl = Optional.FromNullable(Context.Bot.CurrentUser?.GetAvatarUrl())
+            }.WithContent(message.Content);
 
             await foreach (Webhook webhook in _dbctx.Webhooks.AsAsyncEnumerable())
             {
