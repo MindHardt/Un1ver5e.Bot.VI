@@ -12,7 +12,7 @@ namespace Un1ver5e.Bot.Commands
         [SlashCommand("цвет")]
         [Description("Как выглядят цвета.")]
         public async ValueTask<IResult> Color(
-            [Name("Цвет"), Description("Цвет в шестнадцатиричном виде (например 5561F5).")]
+            [Name("Цвет"), Description("Цвет в шестнадцатиричном RGB виде (например 5561F5).")]
             string colorHex)
         {
             if (Regex.IsMatch(colorHex, "[0-9a-fA-F]{6}") == false) return Results.Failure("Неверная строка цвета! Введите 24-битную шестнадцатиричную строку, например `c0ffee`, `3aebca`.");
