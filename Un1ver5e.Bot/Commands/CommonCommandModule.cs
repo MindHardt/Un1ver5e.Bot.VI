@@ -56,10 +56,10 @@ namespace Un1ver5e.Bot.Commands
         [Description("Нейросетки делают картинки")]
         public async ValueTask<IResult> Generate(
             [Name("Тема"), Description("Картинку чего генерируем.")]
-            [Choice("котик",     "https://thiscatdoesnotexist.com/")]
+            [Choice("котика",     "https://thiscatdoesnotexist.com/")]
             [Choice("лошадь",    "https://thishorsedoesnotexist.com/")]
-            [Choice("картина",   "https://thisartworkdoesnotexist.com/")]
-            [Choice("человек",   "https://thispersondoesnotexist.com/image")]
+            [Choice("картину",   "https://thisartworkdoesnotexist.com/")]
+            [Choice("человека",   "https://thispersondoesnotexist.com/image")]
             string url)
         {
             await Deferral(isEphemeral: false);
