@@ -65,7 +65,7 @@ namespace Un1ver5e.Bot.Commands.Tags
             if (existentTag is null || existentTag.CanBeEditedBy(await Bot.IsOwnerAsync(Context.AuthorId), Context.AuthorId))
             {
                 if (existentTag is not null) _dbctx.Tags.Remove(existentTag);
-                await _dbctx.Tags.AddAsync(tag);
+                _dbctx.Tags.Add(tag);
                 await _dbctx.SaveChangesAsync();
 
                 string action = existentTag is null ? "сохранил" : "перезаписал";
