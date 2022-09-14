@@ -15,13 +15,13 @@ namespace Un1ver5e.Bot.Commands
     {
         //CHOOSE
         [SlashCommand("выбери")]
-        [Description("Когда выбрать ну ваще никак.")]
+        [Description("Случайно выбирает из предложенных вариантов.")]
         public IResult Choose(
             [Name("Варианты")]
-            [Description("Любое количество вариантов через пробел.")]
+            [Description("Любое количество вариантов (разделяются запятой).")]
             string options)
         {
-            string[] parsedOptions = options.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            string[] parsedOptions = options.Split(',');
 
             return Response(new LocalEmbed()
                 .WithDescription($"Я выбираю `{parsedOptions.GetRandomElement()}`!")
@@ -36,7 +36,7 @@ namespace Un1ver5e.Bot.Commands
         public IResult Emoji(
             [Name("Эмоджи"), Description("Интересующий кастомный эмоджи.")] ICustomEmoji emoji)
         {
-            string url = emoji.GetUrl(CdnAssetFormat.Png, 128);
+            string url = emoji.GetUrl();
             string name = emoji.Name!;
 
             LocalEmbed embed = new()
@@ -63,13 +63,14 @@ namespace Un1ver5e.Bot.Commands
             await Deferral(isEphemeral: false);
 
             using HttpClient client = new();
-            Stream pic = await client.GetStreamAsync(url);
+            Stream image = await client.GetStreamAsync(url);
+            const string fileName = "generated.jpg";
 
             LocalInteractionMessageResponse resp = new LocalInteractionMessageResponse()
-                .AddAttachment(new(pic, "generated.jpg"))
+                .AddAttachment(new(image, fileName))
                 .AddEmbed(new LocalEmbed()
                     .WithTitle($"Источник: {url}")
-                    .WithImageUrl("attachment://generated.jpg"));
+                    .WithImageUrl($"attachment://{fileName}"));
 
             return Response(resp);
         }
@@ -82,7 +83,7 @@ namespace Un1ver5e.Bot.Commands
             TimeSpan latency = DateTimeOffset.Now - Context.Interaction.CreatedAt();
             DateTimeOffset launchTime = Process.GetCurrentProcess().StartTime;
 
-            string launchTimeStamp = $"<t:{launchTime.ToUnixTimeSeconds()}:R>";
+            string launchTimeStamp = launchTime.ToRelativeDiscordTime();
             string latencyTimeStamp = $"Задержка сокета `{((int)latency.TotalMilliseconds)}`мс.";
 
 
@@ -92,7 +93,7 @@ namespace Un1ver5e.Bot.Commands
                     .AddField(new LocalEmbedField()
                         .WithName("Бот запущен")
                         .WithValue(launchTimeStamp)))
-                .AddComponent(LocalComponent.Row(DeleteThisButtonExtensions.GetDeleteButton()));
+                .AddDeleteThisButton();
 
             return Response(response);
         }
@@ -103,13 +104,13 @@ namespace Un1ver5e.Bot.Commands
         public IResult StartPollCommand(
             [Name("Название"), Description("Текст сверху опроса")] string header,
             [Name("Тип"), Description("Ну вы сами знаете")]
-            [Choice("Анонимное", "true"), Choice("Публичное", "false")] string anonimous,
+            [Choice("Анонимное", "true"), Choice("Публичное", "false")] string anonymous,
             [Name("Время"), Description("Время через которое завершится опрос. Не более суток")] string timeStamp,
             [Name("Варианты"), Description("Опции через запятую")] string options)
         {
             if (TimeSpan.TryParse(timeStamp, out TimeSpan time) == false && time > TimeSpan.FromHours(24)) return Results.Failure("Неверный формат времени!");
 
-            bool isAnon = anonimous == "true";
+            bool isAnon = anonymous == "true";
             return Menu(new DefaultInteractionMenu(new PollView(header, isAnon, time, options.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)), Context.Interaction)
             {
                 AuthorId = null
@@ -135,13 +136,13 @@ namespace Un1ver5e.Bot.Commands
                 .AddEmbed(new LocalEmbed()
                     .WithTitle(rateoption)
                     .WithDescription(msgLink))
-                .AddComponent(DeleteThisButtonExtensions.GetDeleteButtonRow());
+                .AddDeleteThisButton();
 
             return Response(response);
         }
 
         //QUOTE COPY
-        [MessageCommand("Цитата")]
+        [MessageCommand("Цитировать")]
         public IResult RememberThis(IMessage msg)
         {
             var storage = Context.Services.GetRequiredService<IStashStorage<Snowflake>>();
