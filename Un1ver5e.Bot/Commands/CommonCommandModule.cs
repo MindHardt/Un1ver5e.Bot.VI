@@ -34,7 +34,9 @@ namespace Un1ver5e.Bot.Commands
         [SlashCommand("эмоджи")]
         [Description("Дает ссылку на изображение эмоджи.")]
         public IResult Emoji(
-            [Name("Эмоджи"), Description("Интересующий кастомный эмоджи.")] ICustomEmoji emoji)
+            [Name("Эмоджи")] 
+            [Description("Интересующий кастомный эмоджи.")] 
+            ICustomEmoji emoji)
         {
             string url = emoji.GetUrl();
             string name = emoji.Name!;
@@ -179,7 +181,9 @@ namespace Un1ver5e.Bot.Commands
         [SlashCommand("дайс")]
         [Description("Бросает кубик по текстовому описанию.")]
         public IResult Dice(
-            [Name("кубик"), Description("Текст кубика, например \"2d6\" или \"1d4+2\".")] string dice)
+            [Name("кубик")]
+            [Description("Текст кубика, например \"2d6\" или \"1d4+2\".")] 
+            string dice)
         {
             IThrowResult result = Bot.Services.GetRequiredService<IDiceService>().ThrowByQuery(dice);
 
