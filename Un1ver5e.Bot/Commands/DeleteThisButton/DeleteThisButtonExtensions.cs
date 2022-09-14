@@ -1,6 +1,5 @@
 ﻿using Disqord;
-using Disqord.Bot.Commands.Application;
-using Qmmands;
+using static Un1ver5e.Bot.Commands.DeleteThisButton.DeleteThisButtonComponentCommand;
 
 namespace Un1ver5e.Bot.Commands.DeleteThisButton
 {
@@ -24,7 +23,7 @@ namespace Un1ver5e.Bot.Commands.DeleteThisButton
         public static LocalButtonComponent GetDeleteButton(ulong? restrictedToId = null) => new()
         {
             Emoji = LocalEmoji.Unicode("🗑"),
-            CustomId = restrictedToId is null ? DeleteThisButtonCustomId.Value : $"{DeleteThisButtonCustomId.Value}:{restrictedToId}",
+            CustomId = restrictedToId is null ? DeleteThisButtonId : $"{DeleteThisButtonId}:{restrictedToId}",
             Style = restrictedToId is null ? LocalButtonComponentStyle.Danger : LocalButtonComponentStyle.Primary
         };
 

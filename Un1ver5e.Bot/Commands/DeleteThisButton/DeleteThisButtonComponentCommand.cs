@@ -7,8 +7,10 @@ namespace Un1ver5e.Bot.Commands.DeleteThisButton
 {
     public class DeleteThisButtonComponentCommand : DiscordComponentModuleBase
     {
+        public const string DeleteThisButtonId = "mo_delete_this";
+
         //This fires when a button restricted to author is pressed
-        [ButtonCommand(DeleteThisButtonCustomId.Value + ":*")]
+        [ButtonCommand(DeleteThisButtonId + ":*")]
         public async ValueTask<IResult> DeleteMessageButtonCommand(Snowflake restrictedToId)
         {
             if (Context.AuthorId == restrictedToId)
@@ -22,7 +24,7 @@ namespace Un1ver5e.Bot.Commands.DeleteThisButton
         }
 
         //This fires when a public button is pressed
-        [ButtonCommand(DeleteThisButtonCustomId.Value)]
+        [ButtonCommand(DeleteThisButtonId)]
         public async ValueTask DeleteMessageButtonCommand()
         {
             IMessage msg = (Context.Interaction as IComponentInteraction)!.Message;
