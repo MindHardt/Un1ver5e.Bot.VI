@@ -56,7 +56,7 @@ namespace Un1ver5e.Bot
                     logger.WriteTo.Logger(fileLogger);
 
                     //DISCORD WEBHOOK LOGGER
-                    string? webhook = ctx.Configuration.GetRequiredSection("discord_config").GetSection("logs_webhook_url").Get<string>();
+                    string? webhook = ctx.Configuration.GetRequiredSection("Discord").GetSection("LogsWebhookUrl").Get<string>();
                     if (webhook is not null)
                     {
                         Match match = Regex.Match(webhook, "https://discord.com/api/webhooks/(?<Id>\\d*)/(?<Token>.*)");
@@ -96,10 +96,8 @@ namespace Un1ver5e.Bot
 
                     .AddDbContext<BotContext>(options =>
                     {
-                        string[]? connstrArgs = ctx.Configuration.GetSection("db_connstr_args").Get<string[]>();
-                        ArgumentNullException.ThrowIfNull(connstrArgs);
-
-                        string connstr = string.Join(';', connstrArgs);
+                        string connstr = ctx.Configuration.GetConnectionString("PostgreSQL")
+                            ?? throw new KeyNotFoundException("Database connection string not found, please check your config.");
 
                         options.UseNpgsql(connstr);
                     });
@@ -107,9 +105,10 @@ namespace Un1ver5e.Bot
                 })
                 .ConfigureDiscordBot<Un1ver5eBot>((context, bot) =>
                 {
-                    IConfigurationSection config = context.Configuration.GetRequiredSection("discord_config");
+                    IConfigurationSection config = context.Configuration.GetRequiredSection("Discord");
 
-                    string token = config["token"] ?? throw new KeyNotFoundException("Bot token not found, please check your config."); ;
+                    string token = config["Token"]
+                        ?? throw new KeyNotFoundException("Bot token not found, please check your config."); ;
 
                     bot.Token = token;
                 })

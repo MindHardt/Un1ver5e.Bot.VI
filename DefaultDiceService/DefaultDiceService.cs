@@ -12,10 +12,10 @@ namespace Un1ver5e.Bot.Services.Dice
         /// <param name="random"></param>
         public DefaultDiceService(IConfiguration config, Random? random = null)
         {
-            IConfigurationSection configSection = config.GetSection("dice_service");
+            IConfigurationSection configSection = config.GetSection("DiceService");
 
-            AlwaysCacheDice = configSection.GetSection("cache_dice").Get<bool>();
-            CacheBase = configSection.GetSection("cache_base").Get<string[]>();
+            AlwaysCacheDice = configSection.GetSection("AlwaysCacheDice").Get<bool>();
+            CacheBase = configSection.GetSection("CacheBase").Get<string[]>();
             Randomizer = random ?? Random.Shared;
         }
         /// <summary>
